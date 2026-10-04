@@ -34,6 +34,24 @@ enum CanvasMode: String, CaseIterable {
     case .explainers: "Explainers"
     }
   }
+
+  var symbol: String {
+    switch self {
+    case .architecture: "rectangle.3.group.fill"
+    case .flows: "point.topleft.down.to.point.bottomright.curvepath.fill"
+    case .data: "tablecells.fill"
+    case .explainers: "play.rectangle.on.rectangle.fill"
+    }
+  }
+
+  var help: String {
+    switch self {
+    case .architecture: "How the app is built (⇧⌘A)"
+    case .flows: "What people, agents and the app itself do, step by step (⇧⌘F)"
+    case .data: "What the app stores, field by field (⇧⌘D)"
+    case .explainers: "Short videos about how parts of the app work (⇧⌘E)"
+    }
+  }
 }
 
 /// How the inspector and the flow picker group flows.

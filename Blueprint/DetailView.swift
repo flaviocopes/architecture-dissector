@@ -108,13 +108,10 @@ struct DetailView: View {
   @ToolbarContentBuilder
   private func toolbar(_ data: AppData) -> some ToolbarContent {
     ToolbarItem(placement: .principal) {
-      Picker("Show", selection: Binding(get: { store.mode }, set: { store.mode = $0 })) {
-        ForEach(CanvasMode.allCases, id: \.self) { mode in
-          Text(mode.label).tag(mode)
-        }
-      }
-      .pickerStyle(.segmented)
-      .help("Show how the app is built, what people do with it, what it stores, or explainers about it (⇧⌘A, ⇧⌘F, ⇧⌘D, ⇧⌘E)")
+      PillPicker(
+        items: CanvasMode.allCases.map { .init(value: $0, title: $0.label, symbol: $0.symbol, help: $0.help) },
+        selection: Binding(get: { store.mode }, set: { store.mode = $0 })
+      )
       .disabled(data.current == nil)
     }
 
@@ -270,64 +267,98 @@ struct TourCard: View {
   }
 }
 
-/// Overview, In Depth or Technical, as pills on one track over the architecture. The selection slides over.
+/// Overview, In Depth or Technical, over the architecture.
 struct LevelPicker: View {
   @Environment(AppStore.self) private var store
-  @Namespace private var selection
+
+  var body: some View {
+    PillPicker(
+      items: DiagramLevel.allCases.map { .init(value: $0, title: $0.label, symbol: $0.symbol, help: $0.help) },
+      selection: Binding(get: { store.level }, set: { store.level = $0 }),
+      floating: true
+    )
+  }
+}
+
+/// Choices as pills with an icon on one track, like the tabs in Releases. The selection slides over.
+struct PillPicker<Value: Hashable>: View {
+  struct Item {
+    var value: Value
+    var title: String
+    var symbol: String
+    var help: String
+  }
+
+  let items: [Item]
+  @Binding var selection: Value
+  /// Over the canvas, the track needs a frosted background to stay readable.
+  var floating = false
+  @Namespace private var namespace
 
   var body: some View {
     HStack(spacing: 2) {
-      ForEach(DiagramLevel.allCases, id: \.self) { level in
-        LevelPill(level: level, isSelected: store.level == level, selection: selection) {
-          store.level = level
+      ForEach(items, id: \.value) { item in
+        Pill(item: item, isSelected: selection == item.value, namespace: namespace) {
+          selection = item.value
         }
       }
     }
     .padding(3)
-    .background(.regularMaterial, in: Capsule())
-    .overlay(Capsule().strokeBorder(.primary.opacity(0.08), lineWidth: 0.5))
-    .shadow(color: .black.opacity(0.16), radius: 10, y: 3)
+    .background { track }
     .fixedSize()
-    .animation(.snappy(duration: 0.25), value: store.level)
+    .animation(.snappy(duration: 0.25), value: selection)
   }
-}
 
-private struct LevelPill: View {
-  let level: DiagramLevel
-  let isSelected: Bool
-  let selection: Namespace.ID
-  let action: () -> Void
-
-  @Environment(\.colorScheme) private var scheme
-  @State private var isHovering = false
-
-  var body: some View {
-    Button(action: action) {
-      Label {
-        Text(level.label)
-          .foregroundStyle(isSelected || isHovering ? Color.primary : .secondary)
-      } icon: {
-        Image(systemName: level.symbol)
-          .foregroundStyle(isSelected ? AnyShapeStyle(Theme.brand) : AnyShapeStyle(.secondary))
-      }
-      .font(.callout.weight(.medium))
-      .padding(.horizontal, 12)
-      .padding(.vertical, 6)
-      .background {
-        if isSelected {
-          Capsule()
-            .fill(scheme == .dark ? Color.white.opacity(0.14) : .white)
-            .shadow(color: .black.opacity(scheme == .light ? 0.12 : 0), radius: 1.5, y: 1)
-            .matchedGeometryEffect(id: "selection", in: selection)
-        }
-      }
-      .contentShape(Capsule())
+  @ViewBuilder
+  private var track: some View {
+    if floating {
+      Capsule().fill(.regularMaterial)
+        .overlay(Capsule().strokeBorder(.primary.opacity(0.08), lineWidth: 0.5))
+        .shadow(color: .black.opacity(0.16), radius: 10, y: 3)
+    } else {
+      Capsule().fill(Color.primary.opacity(0.06))
     }
-    .buttonStyle(.plain)
-    .onHover { isHovering = $0 }
-    .help(level.help)
-    .accessibilityLabel(level.label)
-    .accessibilityAddTraits(isSelected ? .isSelected : [])
+  }
+
+  private struct Pill: View {
+    let item: Item
+    let isSelected: Bool
+    let namespace: Namespace.ID
+    let action: () -> Void
+
+    @Environment(\.colorScheme) private var scheme
+    @Environment(\.isEnabled) private var isEnabled
+    @State private var isHovering = false
+
+    var body: some View {
+      Button(action: action) {
+        HStack(spacing: 5) {
+          Image(systemName: item.symbol)
+            .font(.system(size: 11.5, weight: .semibold))
+            .foregroundStyle(isSelected ? AnyShapeStyle(Theme.brand) : AnyShapeStyle(.secondary))
+          Text(item.title)
+            .font(.system(size: 12.5, weight: .medium))
+            .foregroundStyle(isSelected || isHovering ? Color.primary : .secondary)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background {
+          if isSelected, isEnabled {
+            Capsule()
+              .fill(scheme == .dark ? Color.white.opacity(0.14) : .white)
+              .shadow(color: .black.opacity(scheme == .light ? 0.12 : 0), radius: 1.5, y: 1)
+              .matchedGeometryEffect(id: "selection", in: namespace)
+          }
+        }
+        .contentShape(Capsule())
+      }
+      .buttonStyle(.plain)
+      .opacity(isEnabled ? 1 : 0.45)
+      .onHover { isHovering = $0 && isEnabled }
+      .help(item.help)
+      .accessibilityLabel(item.title)
+      .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
   }
 }
 
