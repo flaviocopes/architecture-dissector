@@ -102,7 +102,7 @@ Explainers are short videos about how parts of an app work, like "How skill use 
 
 When an agent saves a map, Blueprint records the hash of every file in the folder. From then on it knows which files changed, whether you committed them or not, and marks the components they belong to.
 
-Save a version at each release and the timeline lets you compare any two: new components in green, changed ones in amber with what changed, removed ones in red. In the Data tab, the schema shows how it migrated, field by field.
+Save a version at each release, with the + at the end of the timeline under the diagram or ⌘S. The timeline lets you compare any two: click the arrow between two versions, or right-click one to see what changed since it. New components show in green, changed ones in amber with what changed, removed ones in red. In the Data tab, the schema shows how it migrated, field by field.
 
 ![Comparing Skillscout 1.0.0 with the current architecture](docs/screenshot-compare-light.png)
 

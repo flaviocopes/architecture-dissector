@@ -83,7 +83,6 @@ struct DetailView: View {
         }
       }
       .navigationTitle(store.name(of: app))
-      .navigationSubtitle(subtitle(data))
       .toolbar { toolbar(data) }
       .inspector(isPresented: $store.showInspector) {
         Inspector(app: app, data: data)
@@ -97,14 +96,6 @@ struct DetailView: View {
     }
   }
 
-  private func subtitle(_ data: AppData) -> String {
-    guard let snapshot = data.snapshot(store.viewing) else { return "Not mapped yet" }
-    let architecture = snapshot.architecture
-    var parts = ["\(architecture.nodes.count) components", "\(architecture.edges.count) connections"]
-    parts.append("saved \(snapshot.savedAt.formatted(.relative(presentation: .named)))")
-    return parts.joined(separator: " · ")
-  }
-
   @ToolbarContentBuilder
   private func toolbar(_ data: AppData) -> some ToolbarContent {
     ToolbarItem(placement: .principal) {
@@ -113,38 +104,6 @@ struct DetailView: View {
         selection: Binding(get: { store.mode }, set: { store.mode = $0 })
       )
       .disabled(data.current == nil)
-    }
-
-    ToolbarItemGroup {
-      Menu {
-        Picker("Version", selection: Binding(get: { store.viewing }, set: { store.viewing = $0 })) {
-          ForEach(data.refs.reversed(), id: \.self) { ref in
-            Text(ref.label).tag(ref)
-          }
-        }
-        .pickerStyle(.inline)
-        Divider()
-        Button("Save Current as Version…") { store.isSavingVersion = true }
-          .disabled(data.current == nil)
-      } label: {
-        Label(store.viewing.label, systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
-          .labelStyle(.titleAndIcon)
-      }
-      .help("Choose the version to show")
-      .disabled(data.current == nil)
-
-      Menu {
-        Button("Don't Compare") { store.comparing = nil }
-        Divider()
-        ForEach(data.refs.reversed().filter { $0 != store.viewing }, id: \.self) { ref in
-          Button("Changes Since \(ref.label)") { store.comparing = ref }
-        }
-      } label: {
-        Label(store.comparing.map { "Since \($0.label)" } ?? "Compare", systemImage: "plusminus")
-          .labelStyle(.titleAndIcon)
-      }
-      .help("Highlight what changed since another version")
-      .disabled(data.refs.count < 2)
     }
 
     ToolbarItemGroup {
@@ -531,17 +490,23 @@ struct Timeline: View {
         }
         chip(ref, isViewing: index == viewing, isBase: index == base)
       }
-      if refs.count == 1 {
-        Button { store.isSavingVersion = true } label: {
-          Label("Save as Version", systemImage: "plus")
-            .font(.system(size: 11, weight: .medium))
-            .padding(.horizontal, 10)
-            .frame(height: 26)
+      Button { store.isSavingVersion = true } label: {
+        Group {
+          if refs.count == 1 {
+            Label("Save as Version", systemImage: "plus")
+              .padding(.horizontal, 10)
+          } else {
+            Image(systemName: "plus")
+              .frame(width: 26)
+          }
         }
-        .buttonStyle(.plain)
-        .foregroundStyle(.secondary)
-        .help("Save the current architecture as a version, to compare it with later ones")
+        .font(.system(size: 11, weight: .medium))
+        .frame(height: 26)
+        .contentShape(Capsule())
       }
+      .buttonStyle(.plain)
+      .foregroundStyle(.secondary)
+      .help("Save the current architecture as a version, to compare it with later ones (⌘S)")
     }
     .padding(5)
     .background(.regularMaterial, in: Capsule())
@@ -582,6 +547,7 @@ struct Timeline: View {
       .contentShape(Capsule())
     }
     .buttonStyle(.plain)
+    .help(ref == store.viewing ? "Showing \(ref.label)" : "Show \(ref.label). Right-click to see what changed since it")
     .contextMenu {
       if ref != store.viewing {
         Button("Changes Since \(ref.label)") { store.comparing = ref }
