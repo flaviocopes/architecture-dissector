@@ -13,6 +13,22 @@ enum DiagramLevel: String, CaseIterable {
     }
   }
 
+  var symbol: String {
+    switch self {
+    case .overview: "square.grid.2x2.fill"
+    case .inDepth: "point.3.filled.connected.trianglepath.dotted"
+    case .technical: "text.magnifyingglass"
+    }
+  }
+
+  var help: String {
+    switch self {
+    case .overview: "The app in a few blocks, explained in plain words (⌥⌘1)"
+    case .inDepth: "Every component and connection (⌥⌘2)"
+    case .technical: "Every detail, with what travels over each connection (⌥⌘3)"
+    }
+  }
+
   var metrics: DiagramLayout.Metrics {
     switch self {
     case .overview: .overview

@@ -270,24 +270,63 @@ struct TourCard: View {
   }
 }
 
-/// Overview, In Depth or Technical, over the architecture.
+/// Overview, In Depth or Technical, as pills on one track over the architecture. The selection slides over.
 struct LevelPicker: View {
   @Environment(AppStore.self) private var store
+  @Namespace private var selection
 
   var body: some View {
-    Picker("Level", selection: Binding(get: { store.level }, set: { store.level = $0 })) {
+    HStack(spacing: 2) {
       ForEach(DiagramLevel.allCases, id: \.self) { level in
-        Text(level.label).tag(level)
+        LevelPill(level: level, isSelected: store.level == level, selection: selection) {
+          store.level = level
+        }
       }
     }
-    .pickerStyle(.segmented)
-    .labelsHidden()
-    .fixedSize()
-    .padding(4)
+    .padding(3)
     .background(.regularMaterial, in: Capsule())
     .overlay(Capsule().strokeBorder(.primary.opacity(0.08), lineWidth: 0.5))
-    .shadow(color: .black.opacity(0.14), radius: 8, y: 2)
-    .help("The app in plain words, its components, or every detail written on the chart (⌥⌘1, ⌥⌘2, ⌥⌘3)")
+    .shadow(color: .black.opacity(0.16), radius: 10, y: 3)
+    .fixedSize()
+    .animation(.snappy(duration: 0.25), value: store.level)
+  }
+}
+
+private struct LevelPill: View {
+  let level: DiagramLevel
+  let isSelected: Bool
+  let selection: Namespace.ID
+  let action: () -> Void
+
+  @Environment(\.colorScheme) private var scheme
+  @State private var isHovering = false
+
+  var body: some View {
+    Button(action: action) {
+      Label {
+        Text(level.label)
+          .foregroundStyle(isSelected || isHovering ? Color.primary : .secondary)
+      } icon: {
+        Image(systemName: level.symbol)
+          .foregroundStyle(isSelected ? AnyShapeStyle(Theme.brand) : AnyShapeStyle(.secondary))
+      }
+      .font(.callout.weight(.medium))
+      .padding(.horizontal, 12)
+      .padding(.vertical, 6)
+      .background {
+        if isSelected {
+          Capsule()
+            .fill(scheme == .dark ? Color.white.opacity(0.14) : .white)
+            .shadow(color: .black.opacity(scheme == .light ? 0.12 : 0), radius: 1.5, y: 1)
+            .matchedGeometryEffect(id: "selection", in: selection)
+        }
+      }
+      .contentShape(Capsule())
+    }
+    .buttonStyle(.plain)
+    .onHover { isHovering = $0 }
+    .help(level.help)
+    .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 }
 
