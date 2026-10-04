@@ -17,6 +17,8 @@ Explainers are written, not rendered: you list the scenes and what each one show
 
 `blueprint list` has a MISSING column: the architecture, walkthrough, overview, connection notes, flows, data or explainers an app doesn't have yet. Flows count as missing when there are few of them or some lack an actor or area, so filling them in means mapping every workflow, not only adding the labels. Notes count as missing when most connections have none. When asked to fill in Blueprint, run `blueprint list --missing data --json` (or architecture, walkthrough, overview, notes, flows, explainers) and add that part to every app it lists, one at a time, as `blueprint guide` describes in "Fill in what's missing". Each app's folder is in its path.
 
+Older versions can miss parts too, when they were saved before those parts were mapped. When asked to add them to past versions, read each version's code from the git history and save it back with `--past`, as `blueprint guide` describes in "Fill in older versions".
+
 ## Look up an app before changing it
 
 When you work on an app that `blueprint list` shows, read what's already mapped before you search the code:

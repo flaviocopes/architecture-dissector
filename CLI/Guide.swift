@@ -39,6 +39,14 @@ enum Guide {
     2. Read the code there, and write its architecture. Reuse the ids of the newer architecture for the components and entities that already existed.
     3. Run `blueprint set --file /tmp/<app>-1.0.0.json --version 1.0.0 --past` in the app folder. It saves only that version, at the tag's commit, and leaves the current architecture alone.
 
+    ## Fill in older versions
+
+    Versions saved before an app's flows, data, explainers or overview were mapped don't have them, so the Blueprint app leaves those versions out of the timeline on that tab. To add what an older version misses:
+
+    1. Run `blueprint versions --json` to see the commit of each version, and extract that commit without touching the repo: `mkdir -p /tmp/<app>-1.0.0 && git archive <commit> | tar -x -C /tmp/<app>-1.0.0`. Use the version's tag, like v1.0.0, when it has no commit.
+    2. Run `blueprint show --version 1.0.0 --json > /tmp/<app>-1.0.0.json`, and add what's missing from the code you extracted, as this guide describes. Reuse the ids of the current architecture for the flows, entities and blocks that already existed then, and leave the rest of the version as it is.
+    3. Run `blueprint set --file /tmp/<app>-1.0.0.json --version 1.0.0 --past` in the app folder. It replaces that version, and leaves the current architecture alone.
+
     ## Fill in what's missing
 
     `blueprint list` shows what each app still misses: its architecture, its walkthrough, its overview, notes on its connections (when most have none), its flows (none, too few, or some without an actor or area), its explainers, or the data of an app that stores something. When asked to fill in Blueprint, work through them app by app:

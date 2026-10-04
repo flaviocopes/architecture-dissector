@@ -366,6 +366,28 @@ final class AppStore {
     }
   }
 
+  /// The saved versions the timeline leaves out on this tab and level, oldest first.
+  func versionsMissingPart(_ data: AppData) -> [String] {
+    let shown = Set(timelineRefs(data))
+    return data.refs.filter { !shown.contains($0) }.map(\.label)
+  }
+
+  /// What a version needs to show on this tab and level, in words.
+  var timelinePart: String {
+    switch mode {
+    case .architecture: "overview"
+    case .flows: "flows"
+    case .data: "data"
+    case .explainers: "explainers"
+    }
+  }
+
+  func pastVersionsPrompt(for app: TrackedApp, versions: [String]) -> String {
+    let path = (app.path as NSString).abbreviatingWithTildeInPath
+    let one = versions.count == 1
+    return "The Blueprint \(one ? "version" : "versions") \(versions.formatted(.list(type: .and))) of the app in \(path) \(one ? "has" : "have") no \(timelinePart). Fill \(one ? "it" : "them") in from the code of each version in the git history, as `blueprint guide` explains in \"Fill in older versions\"."
+  }
+
   /// Moves off a version, and drops a comparison with one, that has nothing to show on this tab and level.
   private func keepVersionsThatShowIt() {
     guard let data = selectedData else { return }

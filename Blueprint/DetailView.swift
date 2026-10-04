@@ -466,8 +466,13 @@ struct Timeline: View {
     let viewing = refs.firstIndex(of: store.viewing)
     let base = store.comparing.flatMap { refs.firstIndex(of: $0) }
     let range: ClosedRange<Int>? = if let viewing, let base { min(viewing, base)...max(viewing, base) } else { nil }
+    let missing = store.versionsMissingPart(data)
 
     HStack(spacing: 0) {
+      if !missing.isEmpty, let app = store.selectedApp {
+        VersionsMissingPart(app: app, versions: missing)
+          .padding(.trailing, 4)
+      }
       ForEach(Array(refs.enumerated()), id: \.element) { index, ref in
         if index > 0 {
           let active = range.map { $0.contains(index - 1) && $0.contains(index) } ?? false
@@ -556,6 +561,47 @@ struct Timeline: View {
         Divider()
         Button("Delete Version \(name)", role: .destructive) { store.deleteVersion(name) }
       }
+    }
+  }
+}
+
+/// The versions this tab leaves out of the timeline because they have nothing to show on it,
+/// with the prompt that asks an agent to fill them in from the git history.
+struct VersionsMissingPart: View {
+  @Environment(AppStore.self) private var store
+  let app: TrackedApp
+  let versions: [String]
+  @State private var showing = false
+
+  var body: some View {
+    let part = store.timelinePart
+    Button { showing.toggle() } label: {
+      HStack(spacing: 5) {
+        Image(systemName: "clock.arrow.circlepath")
+        Text("\(versions.count) without \(part)")
+      }
+      .font(.system(size: 11, weight: .medium))
+      .foregroundStyle(.secondary)
+      .padding(.horizontal, 10)
+      .frame(height: 26)
+      .contentShape(Capsule())
+    }
+    .buttonStyle(.plain)
+    .help("Earlier versions without \(part). Click to see how to fill them in")
+    .popover(isPresented: $showing, arrowEdge: .top) {
+      let one = versions.count == 1
+      let name = store.name(of: app)
+      VStack(alignment: .leading, spacing: 10) {
+        Text(versions.count > 3 ? "\(versions.count) earlier versions have no \(part)" : "\(versions.formatted(.list(type: .and))) \(one ? "has" : "have") no \(part)")
+          .font(.system(size: 14, weight: .semibold))
+        Text("\(one ? "It was" : "They were") saved before \(name) had \(part == "overview" ? "an overview" : part) in Blueprint, so this tab leaves \(one ? "it" : "them") out. An agent can read each version's code from the git history and fill in what's missing. Paste this into one working on \(name).")
+          .font(.system(size: 12.5))
+          .foregroundStyle(.secondary)
+          .fixedSize(horizontal: false, vertical: true)
+        PromptCard(text: store.pastVersionsPrompt(for: app, versions: versions), stacked: true)
+      }
+      .padding(16)
+      .frame(width: 360)
     }
   }
 }

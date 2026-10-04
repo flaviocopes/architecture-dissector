@@ -120,13 +120,14 @@ enum Library {
   }
 
   /// Saves an architecture as a version that already shipped, without touching the current one.
-  /// The commit comes from the version's git tag, like v1.0.0 or 1.0.0, when there is one.
+  /// The commit comes from the version's git tag, like v1.0.0 or 1.0.0, when there is one,
+  /// or else from the version it replaces.
   @discardableResult
   static func savePastVersion(_ architecture: Architecture, as name: String, for app: TrackedApp) throws -> Snapshot {
     let name = try validVersion(name)
     let commit = ["v\(name)", name].lazy.compactMap { tag in
       Git.run(["rev-parse", "--short", "\(tag)^{commit}"], in: app.url)?.trimmingCharacters(in: .whitespacesAndNewlines)
-    }.first
+    }.first ?? version(name, of: app.id)?.commit
     let snapshot = Snapshot(version: name, savedAt: .now, commit: commit, architecture: architecture)
     try write(snapshot, to: versionFile(name, of: app.id))
     return snapshot
