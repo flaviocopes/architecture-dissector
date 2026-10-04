@@ -215,36 +215,64 @@ struct ProjectChip: View {
 struct PromptCard: View {
   let text: String
   var prominent = false
+  /// The copy button under the prompt instead of beside it, for narrow columns like the inspector.
+  var stacked = false
   @State private var copied = false
 
   var body: some View {
     let shape = RoundedRectangle(cornerRadius: 14, style: .continuous)
-    HStack(spacing: 12) {
-      Image(systemName: "text.bubble.fill")
-        .font(.system(size: 17))
-        .foregroundStyle(Theme.brand)
-      Text(text)
-        .font(.system(size: 12.5, design: .monospaced))
-        .textSelection(.enabled)
-        .frame(maxWidth: .infinity, alignment: .leading)
-      Button {
-        NSPasteboard.general.clearContents()
-        NSPasteboard.general.setString(text, forType: .string)
-        copied = true
-        Task {
-          try? await Task.sleep(for: .seconds(2))
-          copied = false
+    Group {
+      if stacked {
+        VStack(alignment: .leading, spacing: 10) {
+          HStack(alignment: .top, spacing: 10) {
+            icon
+            prompt
+          }
+          copyButton
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
-      } label: {
-        Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
-          .contentTransition(.symbolEffect(.replace))
+      } else {
+        HStack(spacing: 12) {
+          icon
+          prompt
+          copyButton
+        }
       }
-      .controlSize(prominent ? .large : .regular)
-      .modifier(CopyButtonStyle(prominent: prominent))
     }
     .padding(14)
     .background(.regularMaterial, in: shape)
     .overlay(shape.strokeBorder(Color.primary.opacity(0.08), lineWidth: 1))
+  }
+
+  private var icon: some View {
+    Image(systemName: "text.bubble.fill")
+      .font(.system(size: 17))
+      .foregroundStyle(Theme.brand)
+  }
+
+  private var prompt: some View {
+    Text(text)
+      .font(.system(size: 12.5, design: .monospaced))
+      .textSelection(.enabled)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .fixedSize(horizontal: false, vertical: stacked)
+  }
+
+  private var copyButton: some View {
+    Button {
+      NSPasteboard.general.clearContents()
+      NSPasteboard.general.setString(text, forType: .string)
+      copied = true
+      Task {
+        try? await Task.sleep(for: .seconds(2))
+        copied = false
+      }
+    } label: {
+      Label(copied ? "Copied" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
+        .contentTransition(.symbolEffect(.replace))
+    }
+    .controlSize(prominent ? .large : .regular)
+    .modifier(CopyButtonStyle(prominent: prominent))
   }
 }
 

@@ -111,6 +111,7 @@ final class AppStore {
       UserDefaults.standard.set(level.rawValue, forKey: "diagramLevel")
       selectedBlock = nil
       if level == .overview { selectedNode = nil }
+      keepVersionsThatShowIt()
       refreshCanvas()
       if let tourStep { showStep(tourStep) } else { request(.fit) }
     }
@@ -123,6 +124,7 @@ final class AppStore {
       explainerPlaying = false
       // Explainers play one version as it is, so a comparison would only color them.
       if mode == .explainers { comparing = nil }
+      keepVersionsThatShowIt()
     }
   }
   var selectedEntity: String?
@@ -348,6 +350,28 @@ final class AppStore {
     if let block = selectedBlock, canvasDiagram?.architecture.node(block) == nil {
       selectedBlock = nil
     }
+  }
+
+  /// The versions the timeline offers on this tab and level: the ones that have what it shows, and the current
+  /// architecture always. Versions mapped before flows, data, explainers or the overview existed have nothing to show there.
+  func timelineRefs(_ data: AppData) -> [VersionRef] {
+    data.refs.filter { ref in
+      guard ref != .current, let architecture = data.snapshot(ref)?.architecture else { return true }
+      return switch mode {
+      case .architecture: level != .overview || !architecture.overview.isEmpty
+      case .flows: !architecture.flows.isEmpty
+      case .data: !architecture.entities.isEmpty
+      case .explainers: !architecture.explainers.isEmpty
+      }
+    }
+  }
+
+  /// Moves off a version, and drops a comparison with one, that has nothing to show on this tab and level.
+  private func keepVersionsThatShowIt() {
+    guard let data = selectedData else { return }
+    let refs = timelineRefs(data)
+    if let comparing, !refs.contains(comparing) { self.comparing = nil }
+    if !refs.contains(viewing) { viewing = .current }
   }
 
   /// The overview blocks that stand for any of these components.

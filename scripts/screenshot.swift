@@ -83,7 +83,7 @@ let scenes = extra != nil ? [
   DemoScene(name: "screenshot-theme-terminal-data", app: "skillscout", mode: .data, entity: "parsed-file", theme: .terminal),
   DemoScene(name: "screenshot-theme-minimal-flow", app: "skillscout", mode: .flows, flow: "prune-skills", theme: .minimal),
   DemoScene(name: "screenshot-compare", app: "skillscout", comparing: .version("1.0.0")),
-  DemoScene(name: "screenshot-status", app: "blueprint"),
+  DemoScene(name: "screenshot-version", app: "skillscout", viewing: .version("1.0.0")),  DemoScene(name: "screenshot-status", app: "blueprint"),
   DemoScene(name: "screenshot-level-overview", app: "skillscout", level: .overview),
   DemoScene(name: "screenshot-level-overview-block", app: "skillscout", level: .overview, block: "finder"),
   DemoScene(name: "screenshot-level-overview-tour", app: "skillscout", tour: 1, level: .overview),
@@ -217,12 +217,13 @@ func capture(_ store: AppStore, host: NSHostingController<AnyView>, window: NSWi
     }
     store.selectedID = scene.app
     store.tourStep = nil
+    // The tab goes first: switching it, or the level, moves off versions that have nothing to show there.
+    store.mode = scene.mode
     store.viewing = scene.viewing
     store.comparing = scene.comparing
     store.level = scene.level
     store.selectedNode = scene.node
     store.selectedBlock = scene.block
-    store.mode = scene.mode
     store.selectedFlowID = scene.flow
     store.selectedStep = scene.step
     store.selectedEntity = scene.entity

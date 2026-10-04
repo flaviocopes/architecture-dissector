@@ -462,7 +462,7 @@ struct Timeline: View {
   @Environment(\.colorScheme) private var scheme
 
   var body: some View {
-    let refs = data.refs
+    let refs = store.timelineRefs(data)
     let viewing = refs.firstIndex(of: store.viewing)
     let base = store.comparing.flatMap { refs.firstIndex(of: $0) }
     let range: ClosedRange<Int>? = if let viewing, let base { min(viewing, base)...max(viewing, base) } else { nil }
@@ -492,7 +492,7 @@ struct Timeline: View {
       }
       Button { store.isSavingVersion = true } label: {
         Group {
-          if refs.count == 1 {
+          if data.versions.isEmpty {
             Label("Save as Version", systemImage: "plus")
               .padding(.horizontal, 10)
           } else {

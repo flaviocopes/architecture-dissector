@@ -582,7 +582,7 @@ struct FlowsOverview: View {
           .font(.system(size: 12.5))
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)
-        PromptCard(text: store.flowsPrompt(for: app))
+        PromptCard(text: store.flowsPrompt(for: app), stacked: true)
       }
     } else {
       Picker("Group", selection: $store.flowGrouping) {
@@ -798,7 +798,7 @@ struct NoWalkthrough: View {
         .font(.system(size: 12.5))
         .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)
-      PromptCard(text: store.walkthroughPrompt(for: app))
+      PromptCard(text: store.walkthroughPrompt(for: app), stacked: true)
     }
   }
 }
@@ -996,7 +996,7 @@ struct ExplainersOverview: View {
           .font(.system(size: 12.5))
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)
-        PromptCard(text: store.explainersPrompt(for: app))
+        PromptCard(text: store.explainersPrompt(for: app), stacked: true)
       }
     } else {
       VStack(alignment: .leading, spacing: 6) {
@@ -1097,7 +1097,7 @@ struct DataOverview: View {
           .font(.system(size: 12.5))
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)
-        PromptCard(text: store.dataPrompt(for: app))
+        PromptCard(text: store.dataPrompt(for: app), stacked: true)
       }
     } else {
       let stores = architecture.entities.reduce(into: [String?]()) { stores, entity in
