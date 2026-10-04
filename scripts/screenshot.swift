@@ -31,6 +31,10 @@ struct DemoScene {
   var flowGrouping: FlowGrouping = .actor
   /// Zoom steps after the diagram fits: out to see it from afar, or in when negative, to see details.
   var zoomOut = 0
+  var level: DiagramLevel = .inDepth
+  var block: String?
+  /// Zooms to the selected component at full size, like double-clicking it.
+  var focus = false
 }
 
 let extraArchitecture = extra.flatMap { try? Architecture.decode(Data(contentsOf: $0)) }
@@ -53,6 +57,10 @@ let scenes = extra != nil ? [
   DemoScene(name: "screenshot-extra-terminal", app: "extra", node: extraNode, theme: .terminal),
   DemoScene(name: "screenshot-extra-minimal", app: "extra", node: extraNode, theme: .minimal),
   DemoScene(name: "screenshot-extra-ascii", app: "extra", node: extraNode, theme: .ascii),
+  DemoScene(name: "screenshot-extra-level-overview", app: "extra", level: .overview),
+  DemoScene(name: "screenshot-extra-level-overview-block", app: "extra", level: .overview, block: extraArchitecture?.overview.max { $0.nodes.count < $1.nodes.count }?.id),
+  DemoScene(name: "screenshot-extra-level-technical", app: "extra", level: .technical),
+  DemoScene(name: "screenshot-extra-level-technical-near", app: "extra", node: extraNode, level: .technical, focus: true),
 ] : [
   DemoScene(name: "screenshot-welcome", app: nil),
   DemoScene(name: "screenshot-unmapped", app: "cli-tools"),
@@ -76,6 +84,16 @@ let scenes = extra != nil ? [
   DemoScene(name: "screenshot-theme-minimal-flow", app: "skillscout", mode: .flows, flow: "prune-skills", theme: .minimal),
   DemoScene(name: "screenshot-compare", app: "skillscout", comparing: .version("1.0.0")),
   DemoScene(name: "screenshot-status", app: "blueprint"),
+  DemoScene(name: "screenshot-level-overview", app: "skillscout", level: .overview),
+  DemoScene(name: "screenshot-level-overview-block", app: "skillscout", level: .overview, block: "finder"),
+  DemoScene(name: "screenshot-level-overview-tour", app: "skillscout", tour: 1, level: .overview),
+  DemoScene(name: "screenshot-level-overview-compare", app: "skillscout", comparing: .version("1.0.0"), level: .overview),
+  DemoScene(name: "screenshot-level-overview-ascii", app: "blueprint", theme: .ascii, level: .overview),
+  DemoScene(name: "screenshot-level-technical", app: "skillscout", node: "installer", level: .technical),
+  DemoScene(name: "screenshot-level-technical-near", app: "skillscout", node: "installer", level: .technical, focus: true),
+  DemoScene(name: "screenshot-level-technical-terminal", app: "blueprint", theme: .terminal, zoomOut: -1, level: .technical),
+  DemoScene(name: "screenshot-level-technical-minimal", app: "blueprint", theme: .minimal, zoomOut: -1, level: .technical),
+  DemoScene(name: "screenshot-level-technical-ascii", app: "blueprint", theme: .ascii, zoomOut: -1, level: .technical),
 ]
 
 /// An empty data folder for the welcome screen, and made-up git repositories for its suggestions.
@@ -187,15 +205,20 @@ final class ActiveWindow: NSWindow {
 @MainActor
 func capture(_ store: AppStore, host: NSHostingController<AnyView>, window: NSWindow) async {
   store.start()
-  for scene in scenes {
+  // SCENES=screenshot-level renders only the scenes whose names start with it.
+  let prefix = ProcessInfo.processInfo.environment["SCENES"] ?? ""
+  for scene in scenes where scene.name.hasPrefix(prefix) {
     if scene.app != nil, store.apps.isEmpty {
       setenv("BLUEPRINT_HOME", demoHome.path, 1)
       store.reload()
     }
     store.selectedID = scene.app
+    store.tourStep = nil
     store.viewing = scene.viewing
     store.comparing = scene.comparing
+    store.level = scene.level
     store.selectedNode = scene.node
+    store.selectedBlock = scene.block
     store.mode = scene.mode
     store.selectedFlowID = scene.flow
     store.selectedStep = scene.step
@@ -211,6 +234,10 @@ func capture(_ store: AppStore, host: NSHostingController<AnyView>, window: NSWi
         store.request(scene.zoomOut > 0 ? .zoomOut : .zoomIn)
         try? await Task.sleep(for: .seconds(0.5))
       }
+    }
+    if scene.focus, let node = scene.node {
+      try? await Task.sleep(for: .seconds(1))
+      store.request(.focus(node))
     }
     if let tour = scene.tour {
       try? await Task.sleep(for: .seconds(1))

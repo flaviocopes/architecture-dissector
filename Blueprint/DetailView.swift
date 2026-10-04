@@ -29,9 +29,17 @@ struct DetailView: View {
             } else {
               ExplainersEmpty(app: app)
             }
+          } else if let canvas = store.canvasDiagram {
+            DiagramCanvas(
+              diagram: canvas,
+              selection: store.level == .overview ? $store.selectedBlock : $store.selectedNode,
+              spotlight: store.canvasSpotlight,
+              showLabels: store.showLabels,
+              request: store.canvasRequest
+            )
+            .id(app.id)
           } else {
-            DiagramCanvas(diagram: diagram, selection: $store.selectedNode, spotlight: store.spotlight, showLabels: store.showLabels, request: store.canvasRequest)
-              .id(app.id)
+            OverviewEmpty(app: app)
           }
         } else {
           EmptyArchitecture(app: app)
@@ -50,11 +58,18 @@ struct DetailView: View {
             if store.explainers.count > 1 {
               ChipPicker(items: store.explainers.map { .init(id: $0.id, title: $0.title) }, selected: store.currentExplainer?.id) { store.selectedExplainerID = $0 }
             }
-          } else if let step = store.tourStep, let diagram = store.diagram, diagram.architecture.walkthrough.indices.contains(step) {
-            TourCard(architecture: diagram.architecture, step: step)
-              .transition(.move(edge: .top).combined(with: .opacity))
           } else {
-            TopBanner(app: app, data: data)
+            VStack(spacing: 10) {
+              if data.current != nil {
+                LevelPicker()
+              }
+              if let step = store.tourStep, let diagram = store.diagram, diagram.architecture.walkthrough.indices.contains(step) {
+                TourCard(architecture: diagram.architecture, step: step)
+                  .transition(.move(edge: .top).combined(with: .opacity))
+              } else {
+                TopBanner(app: app, data: data)
+              }
+            }
           }
         }
         .padding(.top, 14)
@@ -255,7 +270,56 @@ struct TourCard: View {
   }
 }
 
-/// The out-of-date warning on the current architecture, or the summary of a comparison.
+/// Overview, In Depth or Technical, over the architecture.
+struct LevelPicker: View {
+  @Environment(AppStore.self) private var store
+
+  var body: some View {
+    Picker("Level", selection: Binding(get: { store.level }, set: { store.level = $0 })) {
+      ForEach(DiagramLevel.allCases, id: \.self) { level in
+        Text(level.label).tag(level)
+      }
+    }
+    .pickerStyle(.segmented)
+    .labelsHidden()
+    .fixedSize()
+    .padding(4)
+    .background(.regularMaterial, in: Capsule())
+    .overlay(Capsule().strokeBorder(.primary.opacity(0.08), lineWidth: 0.5))
+    .shadow(color: .black.opacity(0.14), radius: 8, y: 2)
+    .help("The app in plain words, its components, or every detail written on the chart (⌥⌘1, ⌥⌘2, ⌥⌘3)")
+  }
+}
+
+/// The overview level of an app no agent wrote an overview for yet.
+struct OverviewEmpty: View {
+  @Environment(AppStore.self) private var store
+  let app: TrackedApp
+
+  var body: some View {
+    ZStack {
+      WelcomeBackground()
+      VStack(spacing: 16) {
+        Image(systemName: "square.grid.2x2")
+          .font(.system(size: 44, weight: .light))
+          .foregroundStyle(Theme.brand)
+        Text("No overview yet")
+          .font(.title2.weight(.bold))
+        Text("The overview explains \(store.name(of: app)) in a few blocks and plain words, for someone who has never seen it. In Depth and Technical show its components.")
+          .font(.system(size: 13.5))
+          .foregroundStyle(.secondary)
+          .multilineTextAlignment(.center)
+          .fixedSize(horizontal: false, vertical: true)
+        PromptCard(text: store.overviewPrompt(for: app), prominent: true)
+      }
+      .frame(width: 480)
+      .padding(40)
+    }
+  }
+}
+
+/// The out-of-date warning on the current architecture, the summary of a comparison, or a note that the
+/// technical view has little to write on the connections.
 struct TopBanner: View {
   @Environment(AppStore.self) private var store
   let app: TrackedApp
@@ -307,6 +371,23 @@ struct TopBanner: View {
         }
         Button(copied ? "Copied" : "Copy Prompt for Agent") {
           store.copyPrompt(for: app)
+          copied = true
+          Task {
+            try? await Task.sleep(for: .seconds(2))
+            copied = false
+          }
+        }
+        .controlSize(.small)
+      }
+      .font(.system(size: 12))
+      .pill()
+    } else if store.mode == .architecture, store.level == .technical, store.diagram?.architecture.missing.contains("notes") == true {
+      HStack(spacing: 10) {
+        Image(systemName: "text.bubble")
+          .foregroundStyle(Color.accentColor)
+        Text("Most connections have no note yet, so the chart can't say what travels over them.")
+        Button(copied ? "Copied" : "Copy Prompt for Agent") {
+          store.copy(store.notesPrompt(for: app))
           copied = true
           Task {
             try? await Task.sleep(for: .seconds(2))

@@ -83,6 +83,20 @@ final class AppStore {
   var selectedNode: String? {
     didSet { if selectedNode != nil, tourStep != nil { tourStep = nil } }
   }
+  /// The overview block selected, at the overview level.
+  var selectedBlock: String? {
+    didSet { if selectedBlock != nil, tourStep != nil { tourStep = nil } }
+  }
+  var level = DiagramLevel(rawValue: UserDefaults.standard.string(forKey: "diagramLevel") ?? "") ?? .overview {
+    didSet {
+      guard oldValue != level else { return }
+      UserDefaults.standard.set(level.rawValue, forKey: "diagramLevel")
+      selectedBlock = nil
+      if level == .overview { selectedNode = nil }
+      refreshCanvas()
+      if let tourStep { showStep(tourStep) } else { request(.fit) }
+    }
+  }
   var mode: CanvasMode = .architecture {
     didSet {
       guard oldValue != mode else { return }
@@ -126,6 +140,8 @@ final class AppStore {
   }
   var canvasRequest: CanvasRequest?
   var diagram: Diagram?
+  /// What the architecture canvas draws at the current level. Nil at the overview level when there's no overview.
+  var canvasDiagram: Diagram?
   var alert: String?
   var isSavingVersion = false
   var isShowingSetup = false
@@ -225,6 +241,7 @@ final class AppStore {
   private func selectionChanged() {
     UserDefaults.standard.set(selectedID, forKey: "selectedApp")
     selectedNode = nil
+    selectedBlock = nil
     selectedFlowID = nil
     selectedStep = nil
     selectedEntity = nil
@@ -238,6 +255,7 @@ final class AppStore {
   }
 
   func refreshDiagram() {
+    defer { refreshCanvas() }
     guard let id = selectedID, let appData = data[id] else {
       diagram = nil
       return
@@ -284,6 +302,42 @@ final class AppStore {
     }
   }
 
+  /// Builds what the architecture canvas draws: the overview's blocks, the diagram as it is, or the
+  /// diagram laid out with room for every detail.
+  private func refreshCanvas() {
+    guard let diagram, let id = selectedID, let appData = data[id], let target = appData.snapshot(viewing) else {
+      canvasDiagram = nil
+      return
+    }
+    switch level {
+    case .inDepth:
+      canvasDiagram = diagram
+    case .technical:
+      canvasDiagram = Diagram(architecture: target.architecture, diff: diagram.diff, touched: diagram.touched, level: .technical)
+    case .overview:
+      let architecture = target.architecture
+      guard !architecture.overview.isEmpty else {
+        canvasDiagram = nil
+        break
+      }
+      var diff: ArchitectureDiff?
+      if let components = diagram.diff, let comparing, let base = appData.snapshot(comparing) {
+        diff = ArchitectureDiff(overviewFrom: base.architecture, to: architecture, components: components)
+      }
+      let touched = Set(architecture.overview.filter { $0.nodes.contains(where: diagram.touched.contains) }.map(\.id))
+      canvasDiagram = Diagram(architecture: architecture.overviewMap, diff: diff, touched: touched, level: .overview)
+    }
+    if let block = selectedBlock, canvasDiagram?.architecture.node(block) == nil {
+      selectedBlock = nil
+    }
+  }
+
+  /// The overview blocks that stand for any of these components.
+  func blocks(covering ids: some Sequence<String>) -> [String] {
+    let wanted = Set(ids)
+    return (diagram?.architecture.overview ?? []).filter { $0.nodes.contains(where: wanted.contains) }.map(\.id)
+  }
+
   // MARK: Flows
 
   var flows: [Architecture.Flow] { diagram?.architecture.flows ?? [] }
@@ -327,6 +381,7 @@ final class AppStore {
   /// Switches to the architecture and zooms to a component, from a step that uses it.
   func showComponent(_ id: String) {
     mode = .architecture
+    if level == .overview { level = .inDepth }
     selectedNode = id
     Task {
       try? await Task.sleep(for: .milliseconds(120))
@@ -389,6 +444,12 @@ final class AppStore {
     return Set(walkthrough[tourStep].nodes)
   }
 
+  /// The spotlight on the architecture canvas, where the overview shows blocks instead of components.
+  var canvasSpotlight: Set<String>? {
+    guard let spotlight, level == .overview else { return spotlight }
+    return Set(blocks(covering: spotlight))
+  }
+
   func startTour(at step: Int = 0) {
     guard walkthrough.indices.contains(step) else { return }
     tourStep = step
@@ -416,7 +477,9 @@ final class AppStore {
       return
     }
     selectedNode = nil
-    request(.frame(walkthrough[step].nodes, insets: .belowCard))
+    selectedBlock = nil
+    let nodes = walkthrough[step].nodes
+    request(.frame(level == .overview ? blocks(covering: nodes) : nodes, insets: .belowCard))
   }
 
   func compare(_ base: VersionRef, _ target: VersionRef) {
@@ -514,9 +577,23 @@ final class AppStore {
     return "Add a walkthrough to the Blueprint architecture of the app in \(path), and give every component a clear role and details. Run `blueprint guide` to see how."
   }
 
+  func overviewPrompt(for app: TrackedApp) -> String {
+    let path = (app.path as NSString).abbreviatingWithTildeInPath
+    return "Add an overview to the Blueprint architecture of the app in \(path): 3 to 6 blocks that explain it in plain words, each standing for some of its components. Run `blueprint guide` to see how."
+  }
+
+  func notesPrompt(for app: TrackedApp) -> String {
+    let path = (app.path as NSString).abbreviatingWithTildeInPath
+    return "Add a note to every connection in the Blueprint architecture of the app in \(path): what travels over it, how and when. Run `blueprint guide` to see how."
+  }
+
   func copyPrompt(for app: TrackedApp) {
+    copy(prompt(for: app))
+  }
+
+  func copy(_ text: String) {
     NSPasteboard.general.clearContents()
-    NSPasteboard.general.setString(prompt(for: app), forType: .string)
+    NSPasteboard.general.setString(text, forType: .string)
   }
 
   func reveal(_ app: TrackedApp, path: String? = nil) {

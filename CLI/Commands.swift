@@ -6,7 +6,7 @@ enum Commands {
 
   // MARK: list
 
-  static let missable = ["architecture", "walkthrough", "flows", "data", "explainers"]
+  static let missable = ["architecture", "walkthrough", "overview", "notes", "flows", "data", "explainers"]
 
   static func list(_ args: Arguments) throws {
     try args.check(allowed: ["json", "missing"])
@@ -74,7 +74,7 @@ enum Commands {
     var versions: [String]
     var savedAt: Date?
     var changedFiles: Int?
-    /// What an agent still has to add: architecture, walkthrough, flows or data.
+    /// What an agent still has to add, from `Commands.missable`.
     var missing: [String]
   }
 
@@ -118,6 +118,21 @@ enum Commands {
       }
     }
 
+    if !architecture.overview.isEmpty {
+      print()
+      print(bold("OVERVIEW"))
+      let map = architecture.overviewMap
+      for block in architecture.overview {
+        print("  \(bold(block.name)) \(dim("(\(block.id))"))")
+        if let summary = block.summary { print(Terminal.wrap(summary, indent: "    ")) }
+        let names = block.nodes.map { architecture.node($0)?.name ?? $0 }
+        if !names.isEmpty { print(dim(Terminal.wrap("Stands for " + names.joined(separator: ", "), indent: "    "))) }
+        for link in map.edges where link.from == block.id {
+          print("    → \(map.node(link.to)?.name ?? link.to)\(link.label.map { ": \($0)" } ?? "")")
+        }
+      }
+    }
+
     for flow in architecture.flows {
       print()
       print(bold("FLOW: \(flow.title.uppercased())") + dim(" (\(flow.id)) · \(flow.actor ?? "no actor") · \(flow.area ?? "no area")"))
@@ -146,6 +161,7 @@ enum Commands {
         for edge in architecture.edges where edge.from == node.id {
           let target = architecture.node(edge.to)?.name ?? edge.to
           print("    → \(target)\(edge.label.map { ": \($0)" } ?? "")\(edge.kind.map { dim(" [\($0)]") } ?? "")")
+          if let note = edge.note { print(dim(Terminal.wrap(note, indent: "      "))) }
         }
         if !node.paths.isEmpty { print(dim("    " + node.paths.joined(separator: ", "))) }
       }
@@ -249,6 +265,7 @@ enum Commands {
       throw BlueprintError("Nothing saved, because of the \(report.errors.count == 1 ? "error" : "errors") above.")
     }
     var counts = "\(Terminal.plural(architecture.nodes.count, "component")) in \(Terminal.plural(architecture.groups.count, "group")), \(Terminal.plural(architecture.edges.count, "connection"))"
+    if !architecture.overview.isEmpty { counts += ", \(Terminal.plural(architecture.overview.count, "overview block"))" }
     if !architecture.entities.isEmpty { counts += ", \(entities(architecture.entities.count))" }
     if !architecture.explainers.isEmpty { counts += ", \(Terminal.plural(architecture.explainers.count, "explainer"))" }
     if args.flag("dry-run") {
@@ -281,6 +298,7 @@ enum Commands {
     var parts: [String] = []
     if old.name != new.name || old.summary != new.summary { parts.append("summary") }
     if old.walkthrough != new.walkthrough { parts.append("walkthrough") }
+    if old.overview != new.overview { parts.append("overview") }
     if old.flows != new.flows { parts.append("flows") }
     if old.explainers != new.explainers { parts.append("explainers") }
     let rest = parts.count < 2 ? parts.joined() : parts.dropLast().joined(separator: ", ") + " and " + parts.last!

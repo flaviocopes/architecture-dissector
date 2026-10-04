@@ -98,7 +98,7 @@ enum Command: String, CaseIterable {
   var details: String {
     switch self {
     case .list:
-      "Lists the tracked apps, with how many components and entities their architecture has, how many versions you saved, whether code changed since the last save, and what's still missing: the architecture itself, the walkthrough, the flows (none, too few, or some without an actor or area), the explainers, or the data of an app that stores something. With --missing it lists only the apps missing that part, so an agent can add it to each one."
+      "Lists the tracked apps, with how many components and entities their architecture has, how many versions you saved, whether code changed since the last save, and what's still missing: the architecture itself, the walkthrough, the overview, the notes on connections (when most have none), the flows (none, too few, or some without an actor or area), the explainers, or the data of an app that stores something. With --missing it lists only the apps missing that part, so an agent can add it to each one."
     case .add:
       "Starts tracking a folder, the current one if you don't pass one. Blueprint keeps its data in its own folder and never writes to the app's folder. Then map the architecture: run blueprint guide to see how."
     case .show:
@@ -125,7 +125,7 @@ enum Command: String, CaseIterable {
   var options: [(flag: String, help: String)] {
     let json = ("--json", "Print JSON")
     switch self {
-    case .list: return [("--missing <part>", "Only the apps missing architecture, walkthrough, flows, data or explainers"), json]
+    case .list: return [("--missing <part>", "Only the apps missing architecture, walkthrough, overview, notes, flows, data or explainers"), json]
     case .versions, .status: return [json]
     case .add, .remove, .guide: return []
     case .show: return [("--version <v>", "Show this saved version"), ("--data", "Only the stores and entities, with their fields"), json]

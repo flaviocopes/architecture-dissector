@@ -63,6 +63,23 @@ Open an app and the inspector says what it is in a sentence or two, then how it 
 
 Pinch, ⌘-scroll or turn a mouse wheel to zoom, scroll or drag to move around, and use the minimap to jump. ⌘1 fits the whole diagram.
 
+### Three levels
+
+The Architecture tab draws an app at three levels, and opens on the simplest one.
+
+**Overview** is the app for someone who has never seen it: a few blocks named in plain words, like "The app on your Mac" or "Where your agents keep their skills", each with a sentence about what it does for you. Arrows join the blocks wherever their components work together. Click a block to see the components it stands for, and click one of those to open it in depth.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-level-overview-dark.png" />
+  <img src="docs/screenshot-level-overview-light.png" alt="The overview of Skillscout: six blocks explained in plain words" />
+</picture>
+
+**In Depth** is the diagram above, with every component and connection. **Technical** is the same diagram with bigger cards that carry each component's role, its key points and its files. Next to each arrow it writes what travels over that connection, how and when, like "POST /api/signups with the email as JSON, on submit". Zoom in to read it.
+
+![The technical level of Skillscout, zoomed in on SkillInstaller](docs/screenshot-level-technical-near-light.png)
+
+Switch levels with the control at the top of the canvas, or with ⌥⌘1, ⌥⌘2 and ⌥⌘3. Agents write the overview and the notes on connections along with the rest of the map.
+
 ### Flows
 
 Flows show every workflow that goes through an app, as a flowchart: steps from top to bottom, one column for each actor, decisions that branch. Each flow says whose it is (people using the app, its owner, agents working through its CLI or API, or the app on its own) and which area it belongs to, and the inspector groups them by either. Click a step to see what happens and which components handle it.
@@ -149,7 +166,7 @@ Working with an AI coding agent? Point it at [AGENTS.md](AGENTS.md). It has the 
 
 ## How it works
 
-Agents write each map as JSON: components, connections, flows, entities and explainer scenes, all by id. Blueprint checks it, saves it with a hash of every file in the folder, and lays it out on its own: groups become boxes in columns that keep connections short, connections run through the gaps between boxes, and the flow and data views get layouts of their own. Every layout is checked against hundreds of random maps for overlaps.
+Agents write each map as JSON: components, connections, overview blocks, flows, entities and explainer scenes, all by id. Blueprint checks it, saves it with a hash of every file in the folder, and lays it out on its own: groups become boxes in columns that keep connections short, connections run through the gaps between boxes, and the flow and data views get layouts of their own. The overview goes through the same layout, with each block as one card and an arrow wherever the components of two blocks connect. Every layout is checked against hundreds of random maps for overlaps.
 
 Versions are compared by id, so a map stays comparable as long as agents keep their ids, which the guide asks them to do. Explainers are scenes that point at those same ids, and Blueprint plays them on the real diagrams instead of rendering a video file.
 

@@ -43,6 +43,67 @@
       ]
     }
   ],
+  "overview": [
+    {
+      "id": "you",
+      "name": "You",
+      "summary": "Pick an app and explore how it's built",
+      "nodes": [
+        "you"
+      ]
+    },
+    {
+      "id": "agent",
+      "name": "Your coding agent",
+      "summary": "Reads your code and writes down how the app is built",
+      "nodes": [
+        "agent"
+      ]
+    },
+    {
+      "id": "the-app",
+      "name": "The Blueprint app",
+      "summary": "Draws each app as a diagram you can explore, and shows what changed",
+      "kind": "client",
+      "nodes": [
+        "views",
+        "canvas",
+        "layout",
+        "app-store",
+        "watcher"
+      ]
+    },
+    {
+      "id": "command",
+      "name": "The blueprint command",
+      "summary": "Checks the agent's map and saves it, so the app can draw it",
+      "kind": "cli",
+      "nodes": [
+        "cli",
+        "validation"
+      ]
+    },
+    {
+      "id": "memory",
+      "name": "Blueprint's memory",
+      "summary": "Keeps every map and version on your Mac, and spots changes in your code",
+      "kind": "storage",
+      "nodes": [
+        "library",
+        "diff",
+        "status",
+        "data"
+      ]
+    },
+    {
+      "id": "your-apps",
+      "name": "Your app folders",
+      "summary": "The code Blueprint reads, and never changes",
+      "nodes": [
+        "repos"
+      ]
+    }
+  ],
   "groups": [
     {
       "id": "mac-app",
@@ -227,91 +288,108 @@
     {
       "from": "you",
       "to": "views",
-      "label": "explores"
+      "label": "explores",
+      "note": "Clicks apps in the sidebar, components on the canvas, and versions on the timeline"
     },
     {
       "from": "agent",
       "to": "cli",
-      "label": "maps apps"
+      "label": "maps apps",
+      "note": "Runs blueprint guide, then blueprint set --file with the map as JSON"
     },
     {
       "from": "views",
       "to": "app-store",
-      "label": "reads state"
+      "label": "reads state",
+      "note": "SwiftUI views observe the @Observable store and redraw when it changes"
     },
     {
       "from": "views",
       "to": "canvas",
-      "label": "shows diagram"
+      "label": "shows diagram",
+      "note": "Hands the canvas the diagram for the version and level on screen"
     },
     {
       "from": "canvas",
       "to": "layout",
-      "label": "places nodes"
+      "label": "places nodes",
+      "note": "Asks for card frames and curve routes whenever the diagram changes"
     },
     {
       "from": "app-store",
       "to": "library",
-      "label": "loads apps"
+      "label": "loads apps",
+      "note": "Loads every tracked app's map and versions at launch, and again on change"
     },
     {
       "from": "app-store",
       "to": "diff",
-      "label": "compares versions"
+      "label": "compares versions",
+      "note": "Builds the diff when you pick a version to compare with"
     },
     {
       "from": "app-store",
       "to": "status",
-      "label": "checks freshness"
+      "label": "checks freshness",
+      "note": "Checks the folder's file hashes against the manifest in the background"
     },
     {
       "from": "app-store",
       "to": "watcher",
-      "label": "starts watching"
+      "label": "starts watching",
+      "note": "Starts one watcher for the data folder and one per tracked app"
     },
     {
       "from": "watcher",
       "to": "data",
       "label": "watches",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "FSEvents on Application Support/Blueprint, so a save from the command redraws the app"
     },
     {
       "from": "watcher",
       "to": "repos",
       "label": "watches",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "FSEvents on each tracked folder, debounced before the status check runs"
     },
     {
       "from": "cli",
       "to": "validation",
-      "label": "checks JSON"
+      "label": "checks JSON",
+      "note": "Decodes the JSON and runs every check before anything is saved"
     },
     {
       "from": "cli",
       "to": "library",
-      "label": "saves"
+      "label": "saves",
+      "note": "Writes current.json and the manifest with every file's hash"
     },
     {
       "from": "cli",
       "to": "diff",
-      "label": "prints diffs"
+      "label": "prints diffs",
+      "note": "blueprint diff compares two saved versions by id"
     },
     {
       "from": "cli",
       "to": "status",
-      "label": "prints status"
+      "label": "prints status",
+      "note": "blueprint status lists the files changed since the last save"
     },
     {
       "from": "library",
       "to": "data",
       "label": "reads and writes",
-      "kind": "writes"
+      "kind": "writes",
+      "note": "JSON files in ~/Library/Application Support/Blueprint, one folder per app"
     },
     {
       "from": "status",
       "to": "repos",
       "label": "runs git",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "Runs git ls-files and hashes each file, with GIT_OPTIONAL_LOCKS=0"
     }
   ],
   "flows": [

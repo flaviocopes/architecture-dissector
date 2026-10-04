@@ -45,6 +45,17 @@ struct BlueprintApp: App {
         .pickerStyle(.inline)
         .disabled(store.selectedData?.current == nil)
         Divider()
+        Picker("Level", selection: $store.level) {
+          Text("Overview").tag(DiagramLevel.overview)
+            .keyboardShortcut("1", modifiers: [.command, .option])
+          Text("In Depth").tag(DiagramLevel.inDepth)
+            .keyboardShortcut("2", modifiers: [.command, .option])
+          Text("Technical").tag(DiagramLevel.technical)
+            .keyboardShortcut("3", modifiers: [.command, .option])
+        }
+        .pickerStyle(.inline)
+        .disabled(store.selectedData?.current == nil || store.mode != .architecture)
+        Divider()
         Picker("Theme", selection: $store.diagramTheme) {
           ForEach(DiagramTheme.allCases, id: \.self) { theme in
             Text(theme.label).tag(theme)

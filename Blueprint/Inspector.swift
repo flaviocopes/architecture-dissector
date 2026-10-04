@@ -24,7 +24,15 @@ struct Inspector: View {
           } else {
             DataOverview(app: app, architecture: diagram.architecture)
           }
-        } else if let diagram = store.diagram, let id = store.selectedNode, let node = diagram.architecture.node(id) {
+        } else if store.level == .overview, let diagram = store.diagram, let canvas = store.canvasDiagram {
+          if let id = store.selectedBlock, let node = canvas.architecture.node(id) {
+            BlockDetails(node: node, block: diagram.architecture.block(id), canvas: canvas, architecture: diagram.architecture)
+          } else if let diff = canvas.diff {
+            ChangesList(diagram: canvas, diff: diff)
+          } else {
+            Overview(app: app, data: data)
+          }
+        } else if store.level != .overview, let diagram = store.diagram, let id = store.selectedNode, let node = diagram.architecture.node(id) {
           NodeDetails(app: app, node: node, diagram: diagram, status: store.viewing == .current ? data.status : nil)
         } else if let diagram = store.diagram, let diff = diagram.diff {
           ChangesList(diagram: diagram, diff: diff)
@@ -217,6 +225,112 @@ struct NodeDetails: View {
       .contentShape(Rectangle())
     }
     .buttonStyle(.plain)
+  }
+}
+
+/// A block of the overview: what it does in plain words, and the components it stands for.
+struct BlockDetails: View {
+  @Environment(AppStore.self) private var store
+  /// The block as the overview draws it, which is there even when the block was removed.
+  let node: Architecture.Node
+  let block: Architecture.Block?
+  let canvas: Diagram
+  let architecture: Architecture
+
+  var body: some View {
+    let change = canvas.diff?.nodes[node.id]
+    let members = (block?.nodes ?? []).compactMap(architecture.node)
+
+    HStack(spacing: 12) {
+      KindTile(kind: node.nodeKind, size: 42)
+      VStack(alignment: .leading, spacing: 2) {
+        Text(node.name)
+          .font(.title3.weight(.semibold))
+          .strikethrough(change == .removed)
+        Text("\(members.count) component\(members.count == 1 ? "" : "s")")
+          .font(.callout)
+          .foregroundStyle(.secondary)
+      }
+    }
+
+    if let change, change != .unchanged {
+      VStack(alignment: .leading, spacing: 6) {
+        Text(change == .added ? "New in \(store.viewing.label)" : change == .removed ? "Removed in \(store.viewing.label)" : "Changed in \(store.viewing.label)")
+          .font(.callout.weight(.semibold))
+          .foregroundStyle(change.color)
+        ForEach(canvas.diff?.nodeDetails[node.id] ?? [], id: \.self) { detail in
+          Text(detail).font(.callout)
+        }
+      }
+      .padding(12)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .background(change.color.opacity(0.1), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    RoleCard(label: "In \(architecture.name)", summary: node.summary, details: [], color: node.nodeKind.color, placeholder: "No one described this part yet.")
+
+    if !members.isEmpty {
+      InspectorSection("What's inside") {
+        VStack(alignment: .leading, spacing: 2) {
+          ForEach(members) { member in
+            Button { store.showComponent(member.id) } label: {
+              HStack(alignment: .top, spacing: 10) {
+                KindTile(kind: member.nodeKind, size: 24)
+                VStack(alignment: .leading, spacing: 2) {
+                  Text(member.name).font(.callout.weight(.medium))
+                  if let summary = member.summary {
+                    Text(summary)
+                      .font(.caption)
+                      .foregroundStyle(.secondary)
+                      .lineLimit(2)
+                  }
+                }
+                Spacer(minLength: 0)
+              }
+              .padding(.vertical, 4)
+              .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .help("Show \(member.name) in depth")
+          }
+        }
+        Text("Click a component to see it in depth.")
+          .font(.system(size: 11))
+          .foregroundStyle(.tertiary)
+      }
+    }
+
+    let links = canvas.architecture.edges.filter { $0.from == node.id || $0.to == node.id }
+    if !links.isEmpty {
+      InspectorSection("Works with") {
+        VStack(alignment: .leading, spacing: 2) {
+          ForEach(links) { edge in
+            let outgoing = edge.from == node.id
+            let other = outgoing ? edge.to : edge.from
+            Button { store.request(.focus(other)) } label: {
+              HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Image(systemName: outgoing ? "arrow.right" : "arrow.left")
+                  .font(.system(size: 10, weight: .bold))
+                  .foregroundStyle(.secondary)
+                  .frame(width: 14)
+                VStack(alignment: .leading, spacing: 1) {
+                  Text(canvas.architecture.node(other)?.name ?? other)
+                    .font(.callout.weight(.medium))
+                  if let label = edge.label {
+                    Text(label).font(.caption).foregroundStyle(.secondary)
+                  }
+                }
+                Spacer(minLength: 0)
+              }
+              .padding(.vertical, 5)
+              .padding(.horizontal, 6)
+              .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+          }
+        }
+      }
+    }
   }
 }
 
@@ -437,7 +551,7 @@ struct WalkthroughSteps: View {
           .buttonStyle(.plain)
         }
       }
-      Text("Click any component on the canvas to see its role.")
+      Text(store.level == .overview ? "Click any block on the canvas to see what's inside." : "Click any component on the canvas to see its role.")
         .font(.system(size: 11))
         .foregroundStyle(.tertiary)
     }

@@ -7,11 +7,14 @@ struct ValidationReport {
 
 extension Architecture {
   /// The parts an agent still has to add, by the same rules as the warnings of `validate`: "walkthrough",
-  /// "flows" when there are few of them or some don't say who does them or where, "data" when components
-  /// store something but no entity says what, and "explainers".
+  /// "overview", "notes" when most connections don't say what travels over them, "flows" when there are few
+  /// of them or some don't say who does them or where, "data" when components store something but no entity
+  /// says what, and "explainers".
   var missing: [String] {
     var parts: [String] = []
     if walkthrough.isEmpty, nodes.count > 1 { parts.append("walkthrough") }
+    if overview.isEmpty, nodes.count > 1 { parts.append("overview") }
+    if hasFewNotes { parts.append("notes") }
     if nodes.count > 1, flows.isEmpty || hasFewFlows || flows.contains(where: { $0.flowActor == nil || ($0.area ?? "").isEmpty }) {
       parts.append("flows")
     }
@@ -22,6 +25,11 @@ extension Architecture {
 
   /// An app with more than a handful of components goes through more than a handful of workflows.
   private var hasFewFlows: Bool { nodes.count > 5 && flows.count < 6 }
+
+  /// The technical view writes each connection's note on the chart, so most connections need one.
+  private var hasFewNotes: Bool {
+    !edges.isEmpty && edges.filter { !($0.note ?? "").isEmpty }.count * 2 < edges.count
+  }
 
   /// Decodes an architecture from JSON with error messages an agent can act on.
   static func decode(_ data: Data) throws -> Architecture {
@@ -57,6 +65,14 @@ extension Architecture {
       step.text = step.text.trimmingCharacters(in: .whitespacesAndNewlines)
       step.nodes = step.nodes.map { $0.trimmingCharacters(in: .whitespaces) }
       return step
+    }
+    copy.overview = overview.map { block in
+      var block = block
+      block.id = block.id.trimmingCharacters(in: .whitespaces)
+      block.name = block.name.trimmingCharacters(in: .whitespacesAndNewlines)
+      block.kind = block.kind.map { $0.trimmingCharacters(in: .whitespaces).lowercased() }.flatMap { $0.isEmpty ? nil : $0 }
+      block.nodes = block.nodes.map { $0.trimmingCharacters(in: .whitespaces) }
+      return block
     }
     copy.flows = flows.map { flow in
       var flow = flow
@@ -95,6 +111,7 @@ extension Architecture {
       edge.from = edge.from.trimmingCharacters(in: .whitespaces)
       edge.to = edge.to.trimmingCharacters(in: .whitespaces)
       edge.kind = edge.kind.map { $0.trimmingCharacters(in: .whitespaces).lowercased() }.flatMap { $0.isEmpty ? nil : $0 }
+      edge.note = edge.note.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.flatMap { $0.isEmpty ? nil : $0 }
       return edge
     }
     func trimmed(_ text: String?) -> String? {
@@ -179,6 +196,36 @@ extension Architecture {
       if let kind = edge.kind, EdgeKind(rawValue: kind) == nil {
         report.errors.append("The connection from \(edge.from) to \(edge.to) has kind “\(kind)”. Use one of: \(edgeKinds).")
       }
+    }
+    if hasFewNotes {
+      let without = edges.filter { ($0.note ?? "").isEmpty }.count
+      report.warnings.append("\(without) of \(edges.count) connections have no note, so the technical view can't say what travels over them: run blueprint guide to see how.")
+    }
+
+    var blockIDs = Set<String>()
+    var covered: [String: String] = [:]
+    for block in overview {
+      let name = block.name.isEmpty ? block.id : "“\(block.name)”"
+      if !validID(block.id) { report.errors.append("Overview block id “\(block.id)” should be lowercase letters, numbers and dashes, like your-app.") }
+      if !blockIDs.insert(block.id).inserted { report.errors.append("Two overview blocks have the id \(block.id).") }
+      if block.name.isEmpty { report.errors.append("Overview block \(block.id) needs a name.") }
+      if let kind = block.kind, NodeKind(rawValue: kind) == nil { report.errors.append("Overview block \(name) has kind “\(kind)”. Use one of: \(kinds).") }
+      if block.nodes.isEmpty { report.errors.append("Overview block \(name) lists no components. Give it the components it stands for.") }
+      for id in block.nodes {
+        if !nodeIDs.contains(id) {
+          report.errors.append("Overview block \(name) lists \(id), which isn't a component.")
+        } else if let other = covered[id], other != block.id {
+          report.errors.append("Component \(id) is in overview blocks \(other) and \(block.id). Put it in one.")
+        } else {
+          covered[id] = block.id
+        }
+      }
+      if (block.summary ?? "").isEmpty { report.warnings.append("Overview block \(name) has no summary, so the overview can't say what it does.") }
+    }
+    if overview.isEmpty, nodes.count > 1 {
+      report.warnings.append("There's no overview. Add 3 to 6 blocks that explain the app in plain words: run blueprint guide to see how.")
+    } else if overview.count > 7 {
+      report.warnings.append("The overview has \(overview.count) blocks. Keep it to 6 or fewer, so it stays simple.")
     }
 
     for (index, step) in walkthrough.enumerated() {

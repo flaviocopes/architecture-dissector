@@ -62,6 +62,7 @@ struct ArchitectureDiff: Sendable {
       if old.edgeKind != edge.edgeKind {
         details.append("\(old.edgeKind.rawValue.capitalized) → \(edge.edgeKind.rawValue)")
       }
+      if let note = old.note, !note.isEmpty, note != (edge.note ?? "") { details.append("New note") }
       edges[edge.id] = details.isEmpty ? .unchanged : .changed
       if !details.isEmpty { edgeDetails[edge.id] = details }
     }
@@ -96,6 +97,25 @@ struct ArchitectureDiff: Sendable {
     for entity in base.entities where target.entity(entity.id) == nil {
       entities[entity.id] = .removed
       merged.entities.append(entity)
+    }
+  }
+
+  /// Compares the overviews of two architectures. Blocks match by id, and a block also counts as changed
+  /// when components move in or out of it, or change inside it, as `components` says.
+  init(overviewFrom base: Architecture, to target: Architecture, components: ArchitectureDiff) {
+    self.init(from: base.overviewMap, to: target.overviewMap)
+    for block in target.overview {
+      guard let old = base.block(block.id) else { continue }
+      let gained = block.nodes.filter { !old.nodes.contains($0) }.compactMap { target.node($0)?.name }
+      let lost = old.nodes.filter { !block.nodes.contains($0) }.compactMap { (target.node($0) ?? base.node($0))?.name }
+      let inside = block.nodes.filter { old.nodes.contains($0) && components.nodes[$0] == .changed }.compactMap { target.node($0)?.name }
+      var details: [String] = []
+      if !gained.isEmpty { details.append("Now stands for \(gained.joined(separator: ", "))") }
+      if !lost.isEmpty { details.append("No longer stands for \(lost.joined(separator: ", "))") }
+      if !inside.isEmpty { details.append("Changed inside: \(inside.joined(separator: ", "))") }
+      guard !details.isEmpty else { continue }
+      nodes[block.id] = .changed
+      nodeDetails[block.id, default: []] += details
     }
   }
 

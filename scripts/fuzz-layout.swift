@@ -1,4 +1,5 @@
-// Lays out random architectures, with cycles, self-connections, empty groups and nodes without a group,
+// Lays out random architectures at every level, with cycles, self-connections, empty groups, nodes without a group
+// and overview blocks that cover the same component twice,
 // random flows, and random data with self-references and entities without a store, and checks that
 // every card is placed and no cards or boxes overlap.
 // scripts/fuzz-layout.sh compiles it with the layout and its types.
@@ -21,25 +22,39 @@ enum FuzzLayout {
         )
       }
       let edges = (0..<Int.random(in: 0...(nodeCount * 2))).map { _ in
-        Architecture.Edge(from: "n\(Int.random(in: 0..<nodeCount))", to: "n\(Int.random(in: 0..<nodeCount))", label: nil, kind: nil)
+        Architecture.Edge(
+          from: "n\(Int.random(in: 0..<nodeCount))", to: "n\(Int.random(in: 0..<nodeCount))", label: Bool.random() ? "label" : nil, kind: nil,
+          note: Bool.random() ? String(repeating: "word ", count: Int.random(in: 1...40)) : nil
+        )
       }
-      let diagram = Diagram(architecture: Architecture(name: "Fuzz \(seed)", summary: nil, groups: groups, nodes: nodes, edges: edges))
+      // Blocks that cover some components, sometimes the same one twice, like a map that skipped validation.
+      let overview = (0..<Int.random(in: 0...7)).map { index in
+        Architecture.Block(id: "b\(index)", name: "Block \(index)", nodes: (0..<Int.random(in: 0...6)).map { _ in "n\(Int.random(in: 0..<nodeCount))" })
+      }
+      var architecture = Architecture(name: "Fuzz \(seed)", summary: nil, groups: groups, nodes: nodes, edges: edges)
+      architecture.overview = overview
 
-      let frames = Array(diagram.layout.nodes.values)
-      if frames.count != diagram.architecture.nodes.count {
-        print("seed \(seed): placed \(frames.count) of \(diagram.architecture.nodes.count) cards")
-        failures += 1
-      }
-      for i in frames.indices {
-        for j in frames.indices where j > i && frames[i].insetBy(dx: 1, dy: 1).intersects(frames[j].insetBy(dx: 1, dy: 1)) {
-          print("seed \(seed): two cards overlap")
+      for (level, diagram) in [
+        ("in depth", Diagram(architecture: architecture)),
+        ("technical", Diagram(architecture: architecture, level: .technical)),
+        ("overview", Diagram(architecture: architecture.overviewMap, level: .overview)),
+      ] {
+        let frames = Array(diagram.layout.nodes.values)
+        if frames.count != diagram.architecture.nodes.count {
+          print("seed \(seed), \(level): placed \(frames.count) of \(diagram.architecture.nodes.count) cards")
           failures += 1
         }
-      }
-      for box in diagram.layout.boxes {
-        for other in diagram.layout.boxes where other.id > box.id && box.frame.insetBy(dx: 1, dy: 1).intersects(other.frame.insetBy(dx: 1, dy: 1)) {
-          print("seed \(seed): boxes \(box.id) and \(other.id) overlap")
-          failures += 1
+        for i in frames.indices {
+          for j in frames.indices where j > i && frames[i].insetBy(dx: 1, dy: 1).intersects(frames[j].insetBy(dx: 1, dy: 1)) {
+            print("seed \(seed), \(level): two cards overlap")
+            failures += 1
+          }
+        }
+        for box in diagram.layout.boxes {
+          for other in diagram.layout.boxes where other.id > box.id && box.frame.insetBy(dx: 1, dy: 1).intersects(other.frame.insetBy(dx: 1, dy: 1)) {
+            print("seed \(seed), \(level): boxes \(box.id) and \(other.id) overlap")
+            failures += 1
+          }
         }
       }
     }

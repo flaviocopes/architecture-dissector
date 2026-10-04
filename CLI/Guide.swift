@@ -23,7 +23,7 @@ enum Guide {
     ## Update it after you change the app
 
     1. Run `blueprint status`. It lists the files that changed since the last save, by component, and the changed files no component covers.
-    2. Run `blueprint show --json > /tmp/<app>.json` and edit the file. Keep the id of every component and entity that still exists, even when you rename it, and the name of every field, because Blueprint compares versions by them. Update the walkthrough, summaries, details, flows, entities and explainers too when what they describe changed.
+    2. Run `blueprint show --json > /tmp/<app>.json` and edit the file. Keep the id of every component and entity that still exists, even when you rename it, and the name of every field, because Blueprint compares versions by them. Update the walkthrough, overview, summaries, details, connection notes, flows, entities and explainers too when what they describe changed. Put new components in the overview block they belong to.
     3. Run `blueprint set --file /tmp/<app>.json`. Save it even when the architecture didn't change, so Blueprint knows it's current.
 
     ## Save a version when the app ships
@@ -41,9 +41,9 @@ enum Guide {
 
     ## Fill in what's missing
 
-    `blueprint list` shows what each app still misses: its architecture, its walkthrough, its flows (none, too few, or some without an actor or area), its explainers, or the data of an app that stores something. When asked to fill in Blueprint, work through them app by app:
+    `blueprint list` shows what each app still misses: its architecture, its walkthrough, its overview, notes on its connections (when most have none), its flows (none, too few, or some without an actor or area), its explainers, or the data of an app that stores something. When asked to fill in Blueprint, work through them app by app:
 
-    1. Run `blueprint list --missing data --json`, or --missing architecture, walkthrough, flows or explainers. Each app comes with its id, and its folder in path.
+    1. Run `blueprint list --missing data --json`, or --missing architecture, walkthrough, overview, notes, flows or explainers. Each app comes with its id, and its folder in path.
     2. For each app, read the code in its folder, run `blueprint show <id> --json > /tmp/<id>.json`, add what's missing as this guide describes, and save it with `blueprint set <id> --file /tmp/<id>.json`. An app with no architecture yet gets mapped from scratch.
     3. Run the list again, until it says every app has it.
 
@@ -68,6 +68,24 @@ enum Guide {
     - walkthrough has 3 to 6 steps that walk a newcomer through how the app works, in the order things happen: what starts it, where data goes, what runs in the background. Each step has a title of 2 to 5 words, a text of one or two short sentences, and the ids of the components it involves, so Blueprint can highlight them.
     - A component's summary is its role in this app, in one sentence: what it does here and why the app needs it. "Keeps every day in one SQLite file, and is the only part that writes to it", not "A storage service".
     - details has up to 4 short points, under 15 words each, that make the role precise: what it owns, how it does its job, what depends on it, what to watch out for.
+
+    ## Three levels: overview, in depth, technical
+
+    Blueprint draws the architecture at three levels, and opens on the overview. In Depth is the components and connections. \
+    The other two need a part of their own.
+
+    The overview explains the app to someone who has never seen it and doesn't code, as you'd explain it to a curious kid. \
+    overview has 3 to 6 blocks, and Blueprint draws an arrow between two blocks wherever their components connect:
+
+    - name says what the block is in plain words, from the reader's side: "You", "The app on your Mac", "The server that sends your emails", "Where your notes are saved".
+    - summary says what it does for the reader in one short sentence, with no jargon and no names of technologies: "Keeps every note you write, even when you're offline".
+    - nodes lists the components it stands for. A component belongs to one block at most. Cover everything a user's request touches, and leave out build scripts, tests and release tooling.
+    - Give the people who use the app a block of their own, like "You".
+    - kind is optional: the component kind it's drawn as. Without one, it takes the kind of its first component, so list the main one first.
+
+    The technical view writes each component's role, details, tech and files on its card, and each connection's note next to its arrow. \
+    Give every connection a note: what travels over it, how and when, in one or two short sentences under 25 words. \
+    Here technical words help: "POST /api/signups with the email as JSON, on every form submit", "Watches the folder with FSEvents and reloads after half a second", "Runs every night at 2:00 from a cron trigger".
 
     ## Flows: every workflow in the app
 
@@ -125,12 +143,13 @@ enum Guide {
       "name": "the app's name",
       "summary": "what the app is and who it's for",
       "walkthrough": [{ "title": "...", "text": "...", "nodes": ["node ids"] }],
+      "overview": [{ "id": "...", "name": "plain words", "summary": "what it does for you", "kind": "optional, a component kind", "nodes": ["node ids"] }],
       "groups": [{ "id": "...", "name": "...", "summary": "optional" }],
       "nodes": [{
         "id": "...", "name": "...", "kind": "one of the kinds below", "group": "a group id",
         "summary": "its role in the app", "details": ["..."], "tech": ["..."], "paths": ["..."]
       }],
-      "edges": [{ "from": "a node id", "to": "a node id", "label": "...", "kind": "calls, reads, writes or sends" }],
+      "edges": [{ "from": "a node id", "to": "a node id", "label": "...", "kind": "calls, reads, writes or sends", "note": "what travels over it, how and when" }],
       "flows": [{
         "id": "...", "title": "...", "goal": "the need, from the actor's side", "actor": "user, owner, agent or app", "area": "the part of the app",
         "steps": [{ "id": "...", "title": "...", "text": "...", "kind": "action", "lane": "You", "nodes": ["node ids"], "next": [{ "to": "step id", "label": "..." }] }]
@@ -172,6 +191,12 @@ enum Guide {
         { "title": "The signup is stored", "text": "Each signup becomes one row in D1, so a maker can export the list.", "nodes": ["signup-api", "db"] },
         { "title": "The visitor gets an email", "text": "Resend sends a confirmation, so the list only has real addresses.", "nodes": ["signup-api", "resend"] }
       ],
+      "overview": [
+        { "id": "you", "name": "You", "summary": "Find a product you like and leave your email", "nodes": ["visitor"] },
+        { "id": "website", "name": "The website", "summary": "Shows each product with a form to join its list", "nodes": ["pages"] },
+        { "id": "list-keeper", "name": "The list keeper", "summary": "Checks every email and keeps one list per product", "kind": "database", "nodes": ["signup-api", "db"] },
+        { "id": "mail", "name": "The email service", "summary": "Sends you a note to confirm you're on the list", "nodes": ["resend"] }
+      ],
       "groups": [
         { "id": "site", "name": "Astro site" },
         { "id": "cloudflare", "name": "Cloudflare" },
@@ -187,10 +212,10 @@ enum Guide {
         { "id": "resend", "name": "Resend", "kind": "external", "group": "services", "summary": "Delivers the confirmation email" }
       ],
       "edges": [
-        { "from": "visitor", "to": "pages", "label": "opens" },
-        { "from": "pages", "to": "signup-api", "label": "posts the form" },
-        { "from": "signup-api", "to": "db", "label": "inserts signup", "kind": "writes" },
-        { "from": "signup-api", "to": "resend", "label": "sends confirmation", "kind": "sends" }
+        { "from": "visitor", "to": "pages", "label": "opens", "note": "A static page per product, served from Cloudflare's cache" },
+        { "from": "pages", "to": "signup-api", "label": "posts the form", "note": "POST /api/signups with the product slug and email as JSON, on submit" },
+        { "from": "signup-api", "to": "db", "label": "inserts signup", "kind": "writes", "note": "One INSERT per signup, after the duplicate check on product_id and email" },
+        { "from": "signup-api", "to": "resend", "label": "sends confirmation", "kind": "sends", "note": "Resend's REST API, called after the insert commits, without waiting for delivery" }
       ],
       "flows": [
         {

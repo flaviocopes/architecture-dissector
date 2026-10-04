@@ -8,8 +8,9 @@ struct Diagram {
   var dataLayout: DataLayout
   var diff: ArchitectureDiff?
   var touched: Set<String>
+  var level: DiagramLevel
 
-  init(architecture: Architecture, diff: ArchitectureDiff? = nil, touched: Set<String> = []) {
+  init(architecture: Architecture, diff: ArchitectureDiff? = nil, touched: Set<String> = [], level: DiagramLevel = .inDepth) {
     var shown = diff?.merged ?? architecture
     // Files edited by hand can skip validation, so drop what the layout can't place.
     var ids = Set<String>()
@@ -31,10 +32,11 @@ struct Diagram {
       return entity
     }
     self.architecture = shown
-    self.layout = DiagramLayout(shown)
+    self.layout = DiagramLayout(shown, metrics: level.metrics)
     self.dataLayout = DataLayout(shown)
     self.diff = diff
     self.touched = touched
+    self.level = level
   }
 }
 
@@ -278,7 +280,7 @@ struct ZoomableCanvas<World: View>: View {
         let found = ids.compactMap(frames)
         guard let first = found.first else { return }
         let area = found.reduce(first) { $0.union($1) }.insetBy(dx: -50, dy: -50)
-        let top: CGFloat = insets == .belowCard ? 210 : 70
+        let top: CGFloat = insets == .belowCard ? 250 : 70
         camera.fit(area, in: size, insets: EdgeInsets(top: top, leading: 50, bottom: 110, trailing: 50), maximum: 1)
       }
     }
@@ -306,7 +308,8 @@ struct DiagramWorld: View {
   var onFrame: ([String]) -> Void = { _ in }
 
   private var layout: DiagramLayout { diagram.layout }
-  private var overview: Bool { scale < 0.3 }
+  /// So far out that cards turn into a pattern, which takes longer with bigger cards.
+  private var farOut: Bool { scale * layout.metrics.node.width / DiagramLayout.Metrics.inDepth.node.width < 0.3 }
   /// Below this zoom the titles inside the boxes get too small to read, so they move to callouts.
   private var showsCallouts: Bool { scale < 0.55 && !layout.boxes.isEmpty }
 
@@ -348,9 +351,11 @@ struct DiagramWorld: View {
       }
 
       ForEach(layout.routes) { route in
-        if let label = diagram.architecture.edges.first(where: { $0.id == route.id })?.label, !label.isEmpty,
+        let edge = diagram.architecture.edges.first { $0.id == route.id }
+        let note = layout.metrics.notes ? edge?.note.flatMap { $0.isEmpty ? nil : $0 } : nil
+        if let edge, !(edge.label ?? "").isEmpty || note != nil,
            highlighted.contains(route.id) || (showLabels && scale >= 0.6 && !fading && route.labelSpot != nil) {
-          EdgeLabel(text: label, change: diagram.diff?.edges[route.id], isHighlighted: highlighted.contains(route.id))
+          EdgeLabel(text: edge.label ?? "", note: note, change: diagram.diff?.edges[route.id], isHighlighted: highlighted.contains(route.id))
             .position(route.labelPoint)
             .allowsHitTesting(false)
             .transition(.opacity)
@@ -361,6 +366,7 @@ struct DiagramWorld: View {
         if let frame = layout.nodes[node.id] {
           NodeCard(
             node: node,
+            level: diagram.level,
             change: diagram.diff?.nodes[node.id],
             isSelected: selection == node.id || (selection == nil && spotlight?.contains(node.id) == true),
             isHovered: hovered == node.id,
@@ -393,7 +399,7 @@ struct DiagramWorld: View {
     if id == hovered { return false }
     if let selection { return id != selection && !neighbors.contains(id) }
     if let spotlight { return !spotlight.contains(id) }
-    return overview
+    return farOut
   }
 }
 
@@ -957,12 +963,49 @@ private struct Glow: ViewModifier {
 
 struct EdgeLabel: View {
   let text: String
+  /// What travels over the connection, under the label, in the technical view.
+  var note: String?
   var change: Change?
   var isHighlighted: Bool
   @Environment(\.colorScheme) private var scheme
   @Environment(\.diagramTheme) private var theme
 
   var body: some View {
+    if let note {
+      noted(note)
+    } else {
+      plain
+    }
+  }
+
+  /// The label in bold over its note, in a box as wide as the layout planned for it.
+  private func noted(_ note: String) -> some View {
+    let style = DiagramStyle(theme, scheme)
+    let blueprint = theme == .blueprint
+    let color = change.flatMap { $0 == .unchanged ? nil : $0.color }
+    let shape = RoundedRectangle(cornerRadius: blueprint ? 9 : style.cardRadius, style: .continuous)
+    return VStack(alignment: .leading, spacing: 3) {
+      if !text.isEmpty {
+        Text(text)
+          .font(blueprint ? .system(size: 10.5, weight: .semibold) : style.font(10.5, .semibold))
+          .foregroundStyle(color ?? (blueprint ? Color.primary : style.ink))
+          .lineLimit(1)
+      }
+      Text(note)
+        .font(blueprint ? .system(size: 10.5) : style.font(10))
+        .foregroundStyle(blueprint ? Color.secondary : style.secondaryInk)
+        .lineLimit(5)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(.horizontal, 10)
+    .padding(.vertical, 7)
+    .frame(width: DiagramLayout.noteWidth, alignment: .leading)
+    .background(shape.fill(blueprint ? Theme.backgroundTop(scheme).opacity(0.95) : style.paper))
+    .overlay(shape.strokeBorder(color ?? (blueprint ? (scheme == .dark ? Color.white.opacity(0.12) : Color.black.opacity(0.1)) : style.border), lineWidth: isHighlighted ? 1.5 : (blueprint ? 0.5 : style.borderWidth)))
+  }
+
+  @ViewBuilder
+  private var plain: some View {
     let style = DiagramStyle(theme, scheme)
     let color = change.map { $0 == .unchanged ? Color.secondary : $0.color }
     switch theme {

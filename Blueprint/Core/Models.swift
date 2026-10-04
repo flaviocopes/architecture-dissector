@@ -7,6 +7,8 @@ struct Architecture: Codable, Equatable, Sendable {
   var summary: String?
   /// Steps that walk a newcomer through how the app works, each highlighting the components involved.
   var walkthrough: [Step] = []
+  /// The app in a few blocks explained in plain words, for the overview. Each block stands for some components.
+  var overview: [Block] = []
   var groups: [Group]
   var nodes: [Node]
   var edges: [Edge]
@@ -67,6 +69,18 @@ struct Architecture: Codable, Equatable, Sendable {
     var title: String
     var text: String
     var nodes: [String]
+  }
+
+  /// One part of the overview, like "The app you use" or "Where your notes are saved".
+  struct Block: Codable, Equatable, Sendable, Identifiable {
+    var id: String
+    var name: String
+    /// What it does, in a sentence anyone understands.
+    var summary: String?
+    /// How it's drawn, as a component kind. Without one, it takes the kind of its first component.
+    var kind: String?
+    /// The components it stands for.
+    var nodes: [String] = []
   }
 
   struct Flow: Codable, Equatable, Sendable, Identifiable {
@@ -153,13 +167,36 @@ struct Architecture: Codable, Equatable, Sendable {
     var to: String
     var label: String?
     var kind: String?
+    /// What travels over it, how and when, written on the chart in the technical view.
+    var note: String?
 
     var id: String { "\(from)->\(to)" }
     var edgeKind: EdgeKind { kind.flatMap(EdgeKind.init(rawValue:)) ?? .calls }
   }
 
   func node(_ id: String) -> Node? { nodes.first { $0.id == id } }
+  func block(_ id: String) -> Block? { overview.first { $0.id == id } }
   func group(_ id: String) -> Group? { groups.first { $0.id == id } }
+
+  /// The overview as an architecture of its own: one component per block, and an arrow between two
+  /// blocks wherever their components connect, with the label of the first of those connections.
+  var overviewMap: Architecture {
+    var blockOf: [String: String] = [:]
+    for block in overview {
+      for id in block.nodes where blockOf[id] == nil { blockOf[id] = block.id }
+    }
+    let blocks = overview.map { block in
+      let kind = block.kind ?? block.nodes.lazy.compactMap { self.node($0)?.kind }.first ?? NodeKind.service.rawValue
+      return Node(id: block.id, name: block.name, kind: kind, summary: block.summary, tech: [], paths: [])
+    }
+    var links: [Edge] = []
+    var seen = Set<String>()
+    for edge in edges {
+      guard let from = blockOf[edge.from], let to = blockOf[edge.to], from != to, seen.insert("\(from)->\(to)").inserted else { continue }
+      links.append(Edge(from: from, to: to, label: edge.label, kind: edge.kind))
+    }
+    return Architecture(name: name, summary: summary, groups: [], nodes: blocks, edges: links)
+  }
   func entity(_ id: String) -> Entity? { entities.first { $0.id == id } }
   func flow(_ id: String) -> Flow? { flows.first { $0.id == id } }
 
@@ -177,12 +214,24 @@ extension Architecture {
     name = try container.decode(String.self, forKey: .name)
     summary = try container.decodeIfPresent(String.self, forKey: .summary)
     walkthrough = try container.decodeIfPresent([Step].self, forKey: .walkthrough) ?? []
+    overview = try container.decodeIfPresent([Block].self, forKey: .overview) ?? []
     groups = try container.decodeIfPresent([Group].self, forKey: .groups) ?? []
     nodes = try container.decodeIfPresent([Node].self, forKey: .nodes) ?? []
     edges = try container.decodeIfPresent([Edge].self, forKey: .edges) ?? []
     flows = try container.decodeIfPresent([Flow].self, forKey: .flows) ?? []
     entities = try container.decodeIfPresent([Entity].self, forKey: .entities) ?? []
     explainers = try container.decodeIfPresent([Explainer].self, forKey: .explainers) ?? []
+  }
+}
+
+extension Architecture.Block {
+  init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    id = try container.decode(String.self, forKey: .id)
+    name = try container.decode(String.self, forKey: .name)
+    summary = try container.decodeIfPresent(String.self, forKey: .summary)
+    kind = try container.decodeIfPresent(String.self, forKey: .kind)
+    nodes = try container.decodeIfPresent([String].self, forKey: .nodes) ?? []
   }
 }
 

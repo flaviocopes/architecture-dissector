@@ -1,6 +1,70 @@
 {
   "name": "Skillscout",
   "summary": "A SwiftUI Mac app and a skillscout command that list the skills of 8 coding agents, count how often chats use them, and ask AI for new skill ideas.",
+  "overview": [
+    {
+      "id": "you",
+      "name": "You",
+      "summary": "Look through your skills, share them between agents and ask for new ones",
+      "nodes": [
+        "you"
+      ]
+    },
+    {
+      "id": "the-app",
+      "name": "The app on your Mac",
+      "summary": "Lists every skill your coding agents can load, and how often you use each one",
+      "kind": "client",
+      "nodes": [
+        "views",
+        "app-store",
+        "file-watcher",
+        "updater"
+      ]
+    },
+    {
+      "id": "command",
+      "name": "The skillscout command",
+      "summary": "Does the same from the terminal, so agents can use it too",
+      "nodes": [
+        "cli"
+      ]
+    },
+    {
+      "id": "finder",
+      "name": "The skill finder",
+      "summary": "Finds every skill, counts how often your chats use it, and spots skills that look alike",
+      "kind": "service",
+      "nodes": [
+        "scanner",
+        "prompt-library",
+        "installer"
+      ]
+    },
+    {
+      "id": "ai-helper",
+      "name": "The AI helper",
+      "summary": "Asks an AI agent for skill ideas and drafts when you want new ones",
+      "kind": "external",
+      "nodes": [
+        "analyzer",
+        "ai-engine",
+        "agents"
+      ]
+    },
+    {
+      "id": "folders",
+      "name": "Your agents' folders",
+      "summary": "Where the skills and your chat histories live",
+      "kind": "storage",
+      "nodes": [
+        "skills",
+        "chats",
+        "state",
+        "trash"
+      ]
+    }
+  ],
   "groups": [
     {
       "id": "mac-app",
@@ -208,119 +272,141 @@
     {
       "from": "you",
       "to": "views",
-      "label": "browses skills"
+      "label": "browses skills",
+      "note": "Clicks through the window: skills by agent, by use, and similar pairs"
     },
     {
       "from": "you",
       "to": "cli",
-      "label": "runs commands"
+      "label": "runs commands",
+      "note": "Runs skillscout in Terminal, or an agent runs it for you"
     },
     {
       "from": "views",
       "to": "app-store",
-      "label": "reads state"
+      "label": "reads state",
+      "note": "SwiftUI views observe the @Observable store and redraw when it changes"
     },
     {
       "from": "app-store",
       "to": "file-watcher",
-      "label": "starts watching"
+      "label": "starts watching",
+      "note": "Starts one FSEvents stream for all the skills folders at launch"
     },
     {
       "from": "app-store",
       "to": "scanner",
-      "label": "scans skills"
+      "label": "scans skills",
+      "note": "Rescans the skills folders at launch and after each change event"
     },
     {
       "from": "app-store",
       "to": "prompt-library",
-      "label": "counts usage"
+      "label": "counts usage",
+      "note": "Parses new chat lines in the background and updates the use counts"
     },
     {
       "from": "app-store",
       "to": "installer",
-      "label": "adds skills"
+      "label": "adds skills",
+      "note": "Adds, renames, merges or uninstalls a skill when you choose it in the window"
     },
     {
       "from": "app-store",
       "to": "analyzer",
-      "label": "asks AI"
+      "label": "asks AI",
+      "note": "Asks for ideas, a draft or an explanation, and waits for the answer"
     },
     {
       "from": "app-store",
       "to": "state",
       "label": "saves state",
-      "kind": "writes"
+      "kind": "writes",
+      "note": "Writes state.json atomically after every change you make"
     },
     {
       "from": "updater",
       "to": "github",
-      "label": "checks releases"
+      "label": "checks releases",
+      "note": "Asks for the latest release once a day, and downloads its zip when you accept"
     },
     {
       "from": "file-watcher",
       "to": "skills",
       "label": "watches",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "FSEvents on each agent's skills folder, debounced so a burst triggers one rescan"
     },
     {
       "from": "cli",
       "to": "scanner",
-      "label": "lists skills"
+      "label": "lists skills",
+      "note": "skillscout list scans the folders fresh on every run"
     },
     {
       "from": "cli",
       "to": "prompt-library",
-      "label": "counts usage"
+      "label": "counts usage",
+      "note": "skillscout usage parses the chats, reusing the app's cache when it's there"
     },
     {
       "from": "cli",
       "to": "installer",
-      "label": "adds, uninstalls"
+      "label": "adds, uninstalls",
+      "note": "add, rename, merge and uninstall go through the same installer as the app"
     },
     {
       "from": "cli",
       "to": "analyzer",
-      "label": "suggests, explains"
+      "label": "suggests, explains",
+      "note": "skillscout suggest and explain build the same prompts as the window"
     },
     {
       "from": "scanner",
       "to": "skills",
       "label": "reads SKILL.md",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "Reads each SKILL.md and parses its YAML frontmatter for the name and description"
     },
     {
       "from": "prompt-library",
       "to": "chats",
       "label": "parses chats",
-      "kind": "reads"
+      "kind": "reads",
+      "note": "Reads JSONL transcripts and SQLite chat databases, only what was added since the last pass"
     },
     {
       "from": "prompt-library",
       "to": "state",
       "label": "caches parses",
-      "kind": "writes"
+      "kind": "writes",
+      "note": "Caches parsed chats, so the next launch only reads what's new"
     },
     {
       "from": "installer",
       "to": "skills",
       "label": "links skills",
-      "kind": "writes"
+      "kind": "writes",
+      "note": "Links or copies the skill folder into the other agent's skills folder"
     },
     {
       "from": "installer",
       "to": "trash",
       "label": "moves old copies",
-      "kind": "writes"
+      "kind": "writes",
+      "note": "Moves replaced or uninstalled skills to the Trash, never deletes them"
     },
     {
       "from": "analyzer",
       "to": "ai-engine",
-      "label": "sends prompts"
+      "label": "sends prompts",
+      "note": "Hands over the prompt and parses the JSON that comes back"
     },
     {
       "from": "ai-engine",
       "to": "agents",
-      "label": "runs headless"
+      "label": "runs headless",
+      "note": "Runs codex exec or claude -p as a child process with the login shell PATH"
     }
   ],
   "entities": [

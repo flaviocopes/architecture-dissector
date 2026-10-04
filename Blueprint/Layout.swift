@@ -1,5 +1,27 @@
 import SwiftUI
 
+/// How much the architecture canvas says: the app in a few plain blocks, its components, or its components
+/// with their roles, points and files, and what travels over each connection, written on the chart.
+enum DiagramLevel: String, CaseIterable {
+  case overview, inDepth, technical
+
+  var label: String {
+    switch self {
+    case .overview: "Overview"
+    case .inDepth: "In Depth"
+    case .technical: "Technical"
+    }
+  }
+
+  var metrics: DiagramLayout.Metrics {
+    switch self {
+    case .overview: .overview
+    case .inDepth: .inDepth
+    case .technical: .technical
+    }
+  }
+}
+
 /// Places an architecture on the canvas. Each group is a box, and boxes sit in columns chosen so
 /// connections stay short. Inside a box, components stack in the order their connections flow.
 /// Connections that skip columns run through the gaps between boxes, never across them.
@@ -77,15 +99,38 @@ struct DiagramLayout {
     }
   }
 
-  static let nodeSize = CGSize(width: 228, height: 68)
-  static let maxRows = 8
-  static let rowGap: CGFloat = 18
+  /// The size of the cards and the room around them, for each level.
+  struct Metrics: Equatable {
+    var node: CGSize
+    var maxRows: Int
+    var rowGap: CGFloat
+    var columnGap: CGFloat
+    var boxGap: CGFloat
+    /// Whether labels carry their connection's note, which makes them wider and taller.
+    var notes: Bool
+
+    static let inDepth = Metrics(node: CGSize(width: 228, height: 68), maxRows: 8, rowGap: 18, columnGap: 150, boxGap: 56, notes: false)
+    static let overview = Metrics(node: CGSize(width: 240, height: 168), maxRows: 8, rowGap: 28, columnGap: 110, boxGap: 40, notes: false)
+    static let technical = Metrics(node: CGSize(width: 320, height: 248), maxRows: 4, rowGap: 24, columnGap: 300, boxGap: 72, notes: true)
+  }
+
   static let subColumnGap: CGFloat = 40
-  static let columnGap: CGFloat = 150
-  static let boxGap: CGFloat = 56
   static let padding = (x: CGFloat(20), top: CGFloat(44), bottom: CGFloat(20))
   static let margin: CGFloat = 80
+  /// How wide a label with a note is.
+  static let noteWidth: CGFloat = 240
 
+  /// The room a connection's label takes on the canvas: one line, or the label over its note.
+  static func labelSize(_ edge: Architecture.Edge, notes: Bool) -> CGSize? {
+    if notes, let note = edge.note, !note.isEmpty {
+      let lines = min(ceil(CGFloat(note.count) * 5.6 / (noteWidth - 20)), 5)
+      return CGSize(width: noteWidth, height: 30 + lines * 14)
+    }
+    guard let label = edge.label, !label.isEmpty else { return nil }
+    return CGSize(width: CGFloat(label.count) * 5.9 + 18, height: 20)
+  }
+
+  let metrics: Metrics
   var nodes: [String: CGRect] = [:]
   var boxes: [Box] = []
   var routes: [Route] = []
@@ -103,8 +148,9 @@ struct DiagramLayout {
     var frame: CGRect { CGRect(origin: origin, size: size) }
   }
 
-  init(_ architecture: Architecture) {
-    let size = Self.nodeSize
+  init(_ architecture: Architecture, metrics: Metrics = .inDepth) {
+    self.metrics = metrics
+    let size = metrics.node
     let groupIDs = Set(architecture.groups.map(\.id))
 
     // Every group with components becomes a cluster, and so does every component without a group.
@@ -158,7 +204,7 @@ struct DiagramLayout {
       let ranks = Self.rank(count: members.count, edges: inside)
       for (offset, member) in members.enumerated() { innerRank[member] = ranks[offset] }
       let ordered = members.enumerated().sorted { (ranks[$0.offset], $0.offset) < (ranks[$1.offset], $1.offset) }.map(\.element)
-      let count = Int((Double(ordered.count) / Double(Self.maxRows)).rounded(.up))
+      let count = Int((Double(ordered.count) / Double(metrics.maxRows)).rounded(.up))
       let rows = Int((Double(ordered.count) / Double(count)).rounded(.up))
       clusters[index].columns = stride(from: 0, to: ordered.count, by: rows).map { Array(ordered[$0..<min($0 + rows, ordered.count)]) }
     }
@@ -169,7 +215,7 @@ struct DiagramLayout {
       let cols = CGFloat(cluster.columns.count)
       let inner = CGSize(
         width: cols * size.width + (cols - 1) * Self.subColumnGap,
-        height: rows * size.height + (rows - 1) * Self.rowGap
+        height: rows * size.height + (rows - 1) * metrics.rowGap
       )
       clusters[index].size = cluster.isBox
         ? CGSize(width: inner.width + 2 * Self.padding.x, height: inner.height + Self.padding.top + Self.padding.bottom)
@@ -181,10 +227,10 @@ struct DiagramLayout {
       for (col, column) in cluster.columns.enumerated() {
         guard let row = column.firstIndex(of: id) else { continue }
         let inset = cluster.isBox ? CGPoint(x: Self.padding.x, y: Self.padding.top) : .zero
-        let shift = CGFloat(rows - column.count) * (size.height + Self.rowGap) / 2
+        let shift = CGFloat(rows - column.count) * (size.height + metrics.rowGap) / 2
         return CGPoint(
           x: inset.x + CGFloat(col) * (size.width + Self.subColumnGap) + size.width / 2,
-          y: inset.y + shift + CGFloat(row) * (size.height + Self.rowGap) + size.height / 2
+          y: inset.y + shift + CGFloat(row) * (size.height + metrics.rowGap) + size.height / 2
         )
       }
       return .zero
@@ -201,13 +247,13 @@ struct DiagramLayout {
     var x: CGFloat = 0
     for column in columns {
       let width = column.map { clusters[$0].size.width }.max() ?? 0
-      var y: CGFloat = -(column.map { clusters[$0].size.height }.reduce(0, +) + CGFloat(max(column.count - 1, 0)) * Self.boxGap) / 2
+      var y: CGFloat = -(column.map { clusters[$0].size.height }.reduce(0, +) + CGFloat(max(column.count - 1, 0)) * metrics.boxGap) / 2
       for index in column {
         clusters[index].origin = CGPoint(x: x + (width - clusters[index].size.width) / 2, y: y)
-        y += clusters[index].size.height + Self.boxGap
+        y += clusters[index].size.height + metrics.boxGap
       }
       columnSpans.append(x...(x + width))
-      x += width + Self.columnGap
+      x += width + metrics.columnGap
     }
 
     // Sweep back and forth, moving components and boxes toward what they connect to.
@@ -253,7 +299,7 @@ struct DiagramLayout {
           var top = desired[index]!
           if position > 0 {
             let previous = sorted[position - 1]
-            top = max(top, tops[position - 1] + clusters[previous].size.height + Self.boxGap)
+            top = max(top, tops[position - 1] + clusters[previous].size.height + metrics.boxGap)
           }
           tops.append(top)
         }
@@ -292,7 +338,9 @@ struct DiagramLayout {
       clusterFrames: clusters.map(\.frame),
       columns: columns.enumerated().map { col, members in
         (span: columnSpans[col], obstacles: members.map { clusters[$0].frame }.sorted { $0.minY < $1.minY })
-      }
+      },
+      boxGap: metrics.boxGap,
+      notes: metrics.notes
     )
     routes = router.route(edges)
     bounds = raw.offsetBy(dx: shift.x, dy: shift.y).insetBy(dx: -Self.margin, dy: -Self.margin)
@@ -383,6 +431,8 @@ private struct Router {
   let columnOf: [Int: Int]
   let clusterFrames: [CGRect]
   let columns: [(span: ClosedRange<CGFloat>, obstacles: [CGRect])]
+  let boxGap: CGFloat
+  let notes: Bool
 
   private struct Pass {
     var column: Int
@@ -472,7 +522,7 @@ private struct Router {
         let yb = b.pass == 0 ? plans[b.plan].start.y : plans[b.plan].passes[b.pass - 1].y
         return ya < yb
       }
-      let spacing = min(8, (DiagramLayout.boxGap - 16) / CGFloat(sorted.count - 1))
+      let spacing = min(8, (boxGap - 16) / CGFloat(sorted.count - 1))
       for (i, item) in sorted.enumerated() {
         plans[item.plan].passes[item.pass].offset = (CGFloat(i) - CGFloat(sorted.count - 1) / 2) * spacing
       }
@@ -490,8 +540,7 @@ private struct Router {
   private func placeLabels(_ routes: inout [DiagramLayout.Route], edges: [Architecture.Edge]) {
     var taken = nodes.values.map { $0.insetBy(dx: -4, dy: -4) }
     for (index, edge) in edges.enumerated() {
-      guard let label = edge.label, !label.isEmpty else { continue }
-      let size = CGSize(width: CGFloat(label.count) * 5.9 + 18, height: 20)
+      guard let size = DiagramLayout.labelSize(edge, notes: notes) else { continue }
       let spots = routes[index].segments.flatMap { segment in
         [0.5, 0.38, 0.62, 0.26, 0.74].map { segment.point(at: $0) }
       }
@@ -552,9 +601,9 @@ private struct Router {
   private func laneCenters(_ column: Int) -> [CGFloat] {
     let obstacles = columns[column].obstacles
     guard let first = obstacles.first, let last = obstacles.last else { return [0] }
-    var lanes = [first.minY - DiagramLayout.boxGap / 2]
+    var lanes = [first.minY - boxGap / 2]
     for (upper, lower) in zip(obstacles, obstacles.dropFirst()) { lanes.append((upper.maxY + lower.minY) / 2) }
-    lanes.append(last.maxY + DiagramLayout.boxGap / 2)
+    lanes.append(last.maxY + boxGap / 2)
     return lanes
   }
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Lays out 400 random architectures, 300 random flows and 300 random data schemas, and checks that
+# Lays out 400 random architectures at every level, 300 random flows and 300 random data schemas, and checks that
 # every card is placed and no cards or boxes overlap.
 # Usage: scripts/fuzz-layout.sh
 set -eu
