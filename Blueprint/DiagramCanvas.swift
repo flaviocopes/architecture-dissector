@@ -351,14 +351,8 @@ struct DiagramWorld: View {
       }
 
       ForEach(layout.routes) { route in
-        let edge = diagram.architecture.edges.first { $0.id == route.id }
-        let note = layout.metrics.notes ? edge?.note.flatMap { $0.isEmpty ? nil : $0 } : nil
-        if let edge, !(edge.label ?? "").isEmpty || note != nil,
-           highlighted.contains(route.id) || (showLabels && scale >= 0.6 && !fading && route.labelSpot != nil) {
-          EdgeLabel(text: edge.label ?? "", note: note, change: diagram.diff?.edges[route.id], isHighlighted: highlighted.contains(route.id))
-            .position(route.labelPoint)
-            .allowsHitTesting(false)
-            .transition(.opacity)
+        if route.labelSpot != nil, highlighted.contains(route.id) || (showLabels && scale >= 0.6 && !fading) {
+          label(route, highlighted: highlighted.contains(route.id))
         }
       }
 
@@ -383,6 +377,13 @@ struct DiagramWorld: View {
         }
       }
 
+      // A highlighted label with no free spot sits on its curve, over the cards it would hide behind.
+      ForEach(layout.routes) { route in
+        if route.labelSpot == nil, highlighted.contains(route.id) {
+          label(route, highlighted: true)
+        }
+      }
+
       if showsCallouts {
         ForEach(Callout.place(layout.boxes, architecture: diagram.architecture, nodes: layout.nodes, scale: scale)) { callout in
           CalloutView(callout: callout, scale: scale) { onFrame(callout.nodes) }
@@ -393,6 +394,19 @@ struct DiagramWorld: View {
     .frame(width: layout.bounds.maxX, height: layout.bounds.maxY, alignment: .topLeading)
     .animation(.smooth(duration: 0.45), value: layout.nodes)
     .animation(.smooth(duration: 0.25), value: showsCallouts)
+  }
+
+  /// A connection's label, with its note in the technical view.
+  @ViewBuilder
+  private func label(_ route: DiagramLayout.Route, highlighted: Bool) -> some View {
+    let edge = diagram.architecture.edges.first { $0.id == route.id }
+    let note = layout.metrics.notes ? edge?.note.flatMap { $0.isEmpty ? nil : $0 } : nil
+    if let edge, !(edge.label ?? "").isEmpty || note != nil {
+      EdgeLabel(text: edge.label ?? "", note: note, change: diagram.diff?.edges[route.id], isHighlighted: highlighted)
+        .position(route.labelPoint)
+        .allowsHitTesting(false)
+        .transition(.opacity)
+    }
   }
 
   private func isDimmed(_ id: String, neighbors: Set<String>) -> Bool {
