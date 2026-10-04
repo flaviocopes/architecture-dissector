@@ -1,0 +1,39 @@
+{
+  "fill-specializations" : [
+    { "value" : { "linear-gradient" : ["extended-srgb:0.18431,0.38824,0.92549,1.00000", "extended-srgb:0.04314,0.13725,0.47059,1.00000"] } },
+    { "appearance" : "dark", "value" : { "linear-gradient" : ["extended-srgb:0.07451,0.16471,0.40000,1.00000", "extended-srgb:0.01961,0.04706,0.16863,1.00000"] } }
+  ],
+  "groups" : [
+    {
+      "name" : "Badge",
+      "layers" : [
+        { "name" : "Badge", "image-name" : "badge.png", "glass" : true }
+      ],
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "specular" : true,
+      "translucency" : { "enabled" : true, "value" : 0.2 }
+    },
+    {
+      "name" : "Graph",
+      "layers" : [
+        { "name" : "Details", "image-name" : "details.png", "glass" : true, "opacity" : 0.9 },
+        { "name" : "Cards", "image-name" : "cards.png", "glass" : true },
+        { "name" : "Edges", "image-name" : "edges.png", "glass" : true, "opacity" : 0.85 }
+      ],
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "specular" : true,
+      "translucency" : { "enabled" : true, "value" : 0.3 }
+    },
+    {
+      "name" : "Grid",
+      "layers" : [
+        { "name" : "Grid", "image-name" : "grid.png", "glass" : false, "opacity" : 0.1 }
+      ],
+      "shadow" : { "kind" : "none", "opacity" : 0 },
+      "specular" : false
+    }
+  ],
+  "supported-platforms" : {
+    "squares" : ["macOS"]
+  }
+}

@@ -1,0 +1,571 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		04BFD65A7EBF1A21EEB7AAE3 /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23AE463E3B7AF45996F6AF1 /* Validation.swift */; };
+		092FBEB6938E0EA38CB89D5A /* FlowDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530B2B64A21C8233BAD2AA35 /* FlowDiagram.swift */; };
+		0BB8652902ADFA65BB94C307 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D393F7BAEC53C69DBC12F1 /* Git.swift */; };
+		0ED4826DEDCFD98E4A745118 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A81868B7B5D7EF949965B48C /* ContentView.swift */; };
+		13D37E3C8F516979A074168A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87BDA2ACB1F210886C33625 /* main.swift */; };
+		14F32909F61F8B2A84E5B34D /* DataDiagram.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACAA2784DB242F9C8BE299F3 /* DataDiagram.swift */; };
+		1E9708035880C9A51F4C16C9 /* ProjectFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7ACA040721F496E04F67D1 /* ProjectFinder.swift */; };
+		250AD1B09D07A0E21CC6869B /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894D081603850C8CA86893A8 /* Status.swift */; };
+		2D00D82FFC5A0A05DD0B90B3 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303F354BD5414229DEB25B73 /* Library.swift */; };
+		3BEEEC706153AD6427423FC7 /* Library.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303F354BD5414229DEB25B73 /* Library.swift */; };
+		411427911F0AADCED3CEE03F /* AgentSkill.swift in Sources */ = {isa = PBXBuildFile; fileRef = C69B6A2C78CB701A72F74C0A /* AgentSkill.swift */; };
+		42373CA7DECFAD222CD71E6E /* Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 894D081603850C8CA86893A8 /* Status.swift */; };
+		4ADECD95B791FC8760EAC43B /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D393F7BAEC53C69DBC12F1 /* Git.swift */; };
+		5A29C94A302AB01524B3C166 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2546AF295A1F0C0F330AB5B7 /* Models.swift */; };
+		5BD0C184328C7A9560A45EE6 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52489CFAD18E5E4B89031DFA /* AppStore.swift */; };
+		6490C178B051E85C77B67670 /* SKILL.md in Resources */ = {isa = PBXBuildFile; fileRef = 857186B870AF9A1FD6AE39C4 /* SKILL.md */; };
+		770522FA9EA9CBF82124D122 /* Terminal.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE88E1C8E39CB86212D0B3F /* Terminal.swift */; };
+		7F67AAA9AA601FDF6A3126D8 /* NodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7984EDB2B99E8271AACDC576 /* NodeCard.swift */; };
+		8C127363AF66566DD4A761BF /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2546AF295A1F0C0F330AB5B7 /* Models.swift */; };
+		9305360D1FDA1CC66FF1F1B8 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 73E5BA101D8F2FA0C351B7FE /* AppIcon.icon */; };
+		940A2A24A41E9DA1F9CB0411 /* Inspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1BB97037956475F3E03EBD9 /* Inspector.swift */; };
+		94B7BCF17F09427FF7425E3D /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34855884692F19E29326DD4 /* Diff.swift */; };
+		999BB764C4C84D68FA2692C8 /* Guide.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B2D2B505ECBF211627E286C /* Guide.swift */; };
+		A7B314A9B7C4F305E00076BD /* Welcome.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7C1C958F8D8B4BE9E6CF562 /* Welcome.swift */; };
+		A9C7555A2ABBB378890F97FF /* DiagramCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE1F79EA6E6588E3EF1336C /* DiagramCanvas.swift */; };
+		AF446620CB75D5FC43E67945 /* BlueprintApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25BC7CE0C1DCA821C8647C93 /* BlueprintApp.swift */; };
+		BE075FBCD222C707DBC61DCC /* AppUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = C94D05E5A5DAD251328EFC68 /* AppUpdater.swift */; };
+		C670A3728A09344E4F3EF1C5 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B1E7F048B0165235B3FB8B6 /* DetailView.swift */; };
+		C7EC592ECBDAE6C4EE6EC324 /* BlueprintCLI in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 11DF6A7D46BD95A2FEDD4DC7 /* BlueprintCLI */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D16CE4AF3E4A4CEE2C2532E5 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BDE5D4F8C3F204397A87635 /* Layout.swift */; };
+		D9A812D224AF04B399BFF3D7 /* FileWatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC16700D9101418B7B63A225 /* FileWatcher.swift */; };
+		DEE72DBF248288C1442FC74A /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F34671388723D1B535532B /* Theme.swift */; };
+		ECEF6216974C9AB4A0B3EE91 /* ExplainerPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097AAB2475DCAB514D64D733 /* ExplainerPlayer.swift */; };
+		ED851A770FAFF9BB70EF2398 /* Diff.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34855884692F19E29326DD4 /* Diff.swift */; };
+		F5A08805ED1051D84E77A83B /* Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A23AE463E3B7AF45996F6AF1 /* Validation.swift */; };
+		F7DB6D09D1FB963CC3091A6E /* CommandLineTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2369BC2C69936FF515B5A574 /* CommandLineTool.swift */; };
+		FAA62C6D1986C92E760DADBC /* Commands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3009CFFC85A70181B4166C89 /* Commands.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		96F1270A4F784532C28FC901 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 06E7E5C50C87C3FF92AF85FC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 891D592D37FEE3D69E0EF88B;
+			remoteInfo = BlueprintCLI;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C5F013CF8D485A8C64B774C8 /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Helpers;
+			dstSubfolderSpec = 1;
+			files = (
+				C7EC592ECBDAE6C4EE6EC324 /* BlueprintCLI in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		097AAB2475DCAB514D64D733 /* ExplainerPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplainerPlayer.swift; sourceTree = "<group>"; };
+		11DF6A7D46BD95A2FEDD4DC7 /* BlueprintCLI */ = {isa = PBXFileReference; includeInIndex = 0; path = BlueprintCLI; sourceTree = BUILT_PRODUCTS_DIR; };
+		14F34671388723D1B535532B /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		2369BC2C69936FF515B5A574 /* CommandLineTool.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandLineTool.swift; sourceTree = "<group>"; };
+		2546AF295A1F0C0F330AB5B7 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		25BC7CE0C1DCA821C8647C93 /* BlueprintApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlueprintApp.swift; sourceTree = "<group>"; };
+		2CE1F79EA6E6588E3EF1336C /* DiagramCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagramCanvas.swift; sourceTree = "<group>"; };
+		3009CFFC85A70181B4166C89 /* Commands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commands.swift; sourceTree = "<group>"; };
+		303F354BD5414229DEB25B73 /* Library.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Library.swift; sourceTree = "<group>"; };
+		52489CFAD18E5E4B89031DFA /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
+		530B2B64A21C8233BAD2AA35 /* FlowDiagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowDiagram.swift; sourceTree = "<group>"; };
+		5B2D2B505ECBF211627E286C /* Guide.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Guide.swift; sourceTree = "<group>"; };
+		65D69DA579D8E2AC61A263B6 /* Blueprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Blueprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		73E5BA101D8F2FA0C351B7FE /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = AppIcon.icon; sourceTree = "<group>"; };
+		7984EDB2B99E8271AACDC576 /* NodeCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeCard.swift; sourceTree = "<group>"; };
+		857186B870AF9A1FD6AE39C4 /* SKILL.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = SKILL.md; sourceTree = "<group>"; };
+		894D081603850C8CA86893A8 /* Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Status.swift; sourceTree = "<group>"; };
+		8BDE5D4F8C3F204397A87635 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		9B1E7F048B0165235B3FB8B6 /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		A23AE463E3B7AF45996F6AF1 /* Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validation.swift; sourceTree = "<group>"; };
+		A81868B7B5D7EF949965B48C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AC16700D9101418B7B63A225 /* FileWatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileWatcher.swift; sourceTree = "<group>"; };
+		ACAA2784DB242F9C8BE299F3 /* DataDiagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataDiagram.swift; sourceTree = "<group>"; };
+		AD7ACA040721F496E04F67D1 /* ProjectFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectFinder.swift; sourceTree = "<group>"; };
+		B0D393F7BAEC53C69DBC12F1 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
+		BDE88E1C8E39CB86212D0B3F /* Terminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terminal.swift; sourceTree = "<group>"; };
+		C69B6A2C78CB701A72F74C0A /* AgentSkill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSkill.swift; sourceTree = "<group>"; };
+		C94D05E5A5DAD251328EFC68 /* AppUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdater.swift; sourceTree = "<group>"; };
+		D1BB97037956475F3E03EBD9 /* Inspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inspector.swift; sourceTree = "<group>"; };
+		E34855884692F19E29326DD4 /* Diff.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diff.swift; sourceTree = "<group>"; };
+		E7C1C958F8D8B4BE9E6CF562 /* Welcome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Welcome.swift; sourceTree = "<group>"; };
+		E87BDA2ACB1F210886C33625 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2333FD46DEC5DB7AE532DDC3 = {
+			isa = PBXGroup;
+			children = (
+				C51BE23EA02E423E69D860D4 /* Blueprint */,
+				F8DA5398AEBD32D18F9676F7 /* blueprint */,
+				E9626B2663EBFE2FFBF739A8 /* CLI */,
+				3DEC44589C022C8AEBD50034 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		38092B57B5EA6C698B370FDB /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				E34855884692F19E29326DD4 /* Diff.swift */,
+				B0D393F7BAEC53C69DBC12F1 /* Git.swift */,
+				303F354BD5414229DEB25B73 /* Library.swift */,
+				2546AF295A1F0C0F330AB5B7 /* Models.swift */,
+				894D081603850C8CA86893A8 /* Status.swift */,
+				A23AE463E3B7AF45996F6AF1 /* Validation.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		3DEC44589C022C8AEBD50034 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				65D69DA579D8E2AC61A263B6 /* Blueprint.app */,
+				11DF6A7D46BD95A2FEDD4DC7 /* BlueprintCLI */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C51BE23EA02E423E69D860D4 /* Blueprint */ = {
+			isa = PBXGroup;
+			children = (
+				C69B6A2C78CB701A72F74C0A /* AgentSkill.swift */,
+				73E5BA101D8F2FA0C351B7FE /* AppIcon.icon */,
+				52489CFAD18E5E4B89031DFA /* AppStore.swift */,
+				C94D05E5A5DAD251328EFC68 /* AppUpdater.swift */,
+				25BC7CE0C1DCA821C8647C93 /* BlueprintApp.swift */,
+				2369BC2C69936FF515B5A574 /* CommandLineTool.swift */,
+				A81868B7B5D7EF949965B48C /* ContentView.swift */,
+				ACAA2784DB242F9C8BE299F3 /* DataDiagram.swift */,
+				9B1E7F048B0165235B3FB8B6 /* DetailView.swift */,
+				2CE1F79EA6E6588E3EF1336C /* DiagramCanvas.swift */,
+				097AAB2475DCAB514D64D733 /* ExplainerPlayer.swift */,
+				AC16700D9101418B7B63A225 /* FileWatcher.swift */,
+				530B2B64A21C8233BAD2AA35 /* FlowDiagram.swift */,
+				D1BB97037956475F3E03EBD9 /* Inspector.swift */,
+				8BDE5D4F8C3F204397A87635 /* Layout.swift */,
+				7984EDB2B99E8271AACDC576 /* NodeCard.swift */,
+				AD7ACA040721F496E04F67D1 /* ProjectFinder.swift */,
+				14F34671388723D1B535532B /* Theme.swift */,
+				E7C1C958F8D8B4BE9E6CF562 /* Welcome.swift */,
+				38092B57B5EA6C698B370FDB /* Core */,
+			);
+			path = Blueprint;
+			sourceTree = "<group>";
+		};
+		E9626B2663EBFE2FFBF739A8 /* CLI */ = {
+			isa = PBXGroup;
+			children = (
+				3009CFFC85A70181B4166C89 /* Commands.swift */,
+				5B2D2B505ECBF211627E286C /* Guide.swift */,
+				E87BDA2ACB1F210886C33625 /* main.swift */,
+				BDE88E1C8E39CB86212D0B3F /* Terminal.swift */,
+			);
+			path = CLI;
+			sourceTree = "<group>";
+		};
+		F8DA5398AEBD32D18F9676F7 /* blueprint */ = {
+			isa = PBXGroup;
+			children = (
+				857186B870AF9A1FD6AE39C4 /* SKILL.md */,
+			);
+			name = blueprint;
+			path = skill/blueprint;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		32AC90F37063B3D25B09BF04 /* Blueprint */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 210214494B20AB0BBC888148 /* Build configuration list for PBXNativeTarget "Blueprint" */;
+			buildPhases = (
+				99280EA2635AE3B5567BCEC2 /* Sources */,
+				96152E51074A0A055D42ACF6 /* Resources */,
+				C5F013CF8D485A8C64B774C8 /* Embed Dependencies */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D8A96AFC1DC501496D579B33 /* PBXTargetDependency */,
+			);
+			name = Blueprint;
+			packageProductDependencies = (
+			);
+			productName = Blueprint;
+			productReference = 65D69DA579D8E2AC61A263B6 /* Blueprint.app */;
+			productType = "com.apple.product-type.application";
+		};
+		891D592D37FEE3D69E0EF88B /* BlueprintCLI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F1380B6F0C25E6E44470A9A /* Build configuration list for PBXNativeTarget "BlueprintCLI" */;
+			buildPhases = (
+				DF2228E7E81F0641E07C3D36 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BlueprintCLI;
+			packageProductDependencies = (
+			);
+			productName = BlueprintCLI;
+			productReference = 11DF6A7D46BD95A2FEDD4DC7 /* BlueprintCLI */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		06E7E5C50C87C3FF92AF85FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					32AC90F37063B3D25B09BF04 = {
+						ProvisioningStyle = Manual;
+					};
+					891D592D37FEE3D69E0EF88B = {
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 68386350FD41FA710EFA2412 /* Build configuration list for PBXProject "Blueprint" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 2333FD46DEC5DB7AE532DDC3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3DEC44589C022C8AEBD50034 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				32AC90F37063B3D25B09BF04 /* Blueprint */,
+				891D592D37FEE3D69E0EF88B /* BlueprintCLI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		96152E51074A0A055D42ACF6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9305360D1FDA1CC66FF1F1B8 /* AppIcon.icon in Resources */,
+				6490C178B051E85C77B67670 /* SKILL.md in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		99280EA2635AE3B5567BCEC2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				411427911F0AADCED3CEE03F /* AgentSkill.swift in Sources */,
+				5BD0C184328C7A9560A45EE6 /* AppStore.swift in Sources */,
+				BE075FBCD222C707DBC61DCC /* AppUpdater.swift in Sources */,
+				AF446620CB75D5FC43E67945 /* BlueprintApp.swift in Sources */,
+				F7DB6D09D1FB963CC3091A6E /* CommandLineTool.swift in Sources */,
+				0ED4826DEDCFD98E4A745118 /* ContentView.swift in Sources */,
+				14F32909F61F8B2A84E5B34D /* DataDiagram.swift in Sources */,
+				C670A3728A09344E4F3EF1C5 /* DetailView.swift in Sources */,
+				A9C7555A2ABBB378890F97FF /* DiagramCanvas.swift in Sources */,
+				ED851A770FAFF9BB70EF2398 /* Diff.swift in Sources */,
+				ECEF6216974C9AB4A0B3EE91 /* ExplainerPlayer.swift in Sources */,
+				D9A812D224AF04B399BFF3D7 /* FileWatcher.swift in Sources */,
+				092FBEB6938E0EA38CB89D5A /* FlowDiagram.swift in Sources */,
+				0BB8652902ADFA65BB94C307 /* Git.swift in Sources */,
+				940A2A24A41E9DA1F9CB0411 /* Inspector.swift in Sources */,
+				D16CE4AF3E4A4CEE2C2532E5 /* Layout.swift in Sources */,
+				3BEEEC706153AD6427423FC7 /* Library.swift in Sources */,
+				8C127363AF66566DD4A761BF /* Models.swift in Sources */,
+				7F67AAA9AA601FDF6A3126D8 /* NodeCard.swift in Sources */,
+				1E9708035880C9A51F4C16C9 /* ProjectFinder.swift in Sources */,
+				42373CA7DECFAD222CD71E6E /* Status.swift in Sources */,
+				DEE72DBF248288C1442FC74A /* Theme.swift in Sources */,
+				04BFD65A7EBF1A21EEB7AAE3 /* Validation.swift in Sources */,
+				A7B314A9B7C4F305E00076BD /* Welcome.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF2228E7E81F0641E07C3D36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FAA62C6D1986C92E760DADBC /* Commands.swift in Sources */,
+				94B7BCF17F09427FF7425E3D /* Diff.swift in Sources */,
+				4ADECD95B791FC8760EAC43B /* Git.swift in Sources */,
+				999BB764C4C84D68FA2692C8 /* Guide.swift in Sources */,
+				2D00D82FFC5A0A05DD0B90B3 /* Library.swift in Sources */,
+				5A29C94A302AB01524B3C166 /* Models.swift in Sources */,
+				250AD1B09D07A0E21CC6869B /* Status.swift in Sources */,
+				770522FA9EA9CBF82124D122 /* Terminal.swift in Sources */,
+				F5A08805ED1051D84E77A83B /* Validation.swift in Sources */,
+				13D37E3C8F516979A074168A /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D8A96AFC1DC501496D579B33 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 891D592D37FEE3D69E0EF88B /* BlueprintCLI */;
+			targetProxy = 96F1270A4F784532C28FC901 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		09A3CD070C51922309CBEBCF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Support/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Blueprint;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.flaviocopes.blueprint;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		1A6CD86666F20A6D5248B9E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Support/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Blueprint;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.flaviocopes.blueprint;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		1B1011DB5994159C38B471B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		99A148F609DF9D6FA039F0C1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.flaviocopes.blueprint.cli;
+				PRODUCT_NAME = blueprint;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C9F500714A2EB0598283CA6C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.flaviocopes.blueprint.cli;
+				PRODUCT_NAME = blueprint;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		DBD9E2F90446315E377D9F9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		210214494B20AB0BBC888148 /* Build configuration list for PBXNativeTarget "Blueprint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A6CD86666F20A6D5248B9E2 /* Debug */,
+				09A3CD070C51922309CBEBCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5F1380B6F0C25E6E44470A9A /* Build configuration list for PBXNativeTarget "BlueprintCLI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				99A148F609DF9D6FA039F0C1 /* Debug */,
+				C9F500714A2EB0598283CA6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		68386350FD41FA710EFA2412 /* Build configuration list for PBXProject "Blueprint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DBD9E2F90446315E377D9F9B /* Debug */,
+				1B1011DB5994159C38B471B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 06E7E5C50C87C3FF92AF85FC /* Project object */;
+}

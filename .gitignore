@@ -1,0 +1,8 @@
+.DS_Store
+build/
+dist/
+DerivedData/
+xcuserdata/
+*.xcuserstate
+.cursor/hooks/state/
+/blueprint-showreel.mp4

@@ -1,0 +1,549 @@
+{
+  "name": "Skillscout",
+  "summary": "A SwiftUI Mac app and a skillscout command that list the skills of 8 coding agents, count how often chats use them, and ask AI for new skill ideas.",
+  "groups": [
+    {
+      "id": "mac-app",
+      "name": "Mac app"
+    },
+    {
+      "id": "cli",
+      "name": "Command line"
+    },
+    {
+      "id": "core",
+      "name": "Shared core"
+    },
+    {
+      "id": "disk",
+      "name": "On your Mac"
+    },
+    {
+      "id": "external",
+      "name": "External"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "you",
+      "name": "You",
+      "kind": "user",
+      "summary": "Browses skills, adds them to other agents and asks for ideas"
+    },
+    {
+      "id": "views",
+      "name": "Views",
+      "kind": "ui",
+      "group": "mac-app",
+      "summary": "The split view, skill lists, detail panes and suggestions",
+      "tech": [
+        "SwiftUI"
+      ],
+      "paths": [
+        "Skillscout/ContentView.swift",
+        "Skillscout/SkillViews.swift",
+        "Skillscout/SuggestionViews.swift",
+        "Skillscout/Components.swift",
+        "Skillscout/SettingsView.swift"
+      ]
+    },
+    {
+      "id": "app-store",
+      "name": "AppStore",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "The observable state: loads skills and chats, runs AI actions, saves state.json",
+      "tech": [
+        "Observation"
+      ],
+      "paths": [
+        "Skillscout/AppStore.swift",
+        "Skillscout/SkillscoutApp.swift"
+      ]
+    },
+    {
+      "id": "file-watcher",
+      "name": "FileWatcher",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "Watches the agents' skills folders for changes",
+      "tech": [
+        "FSEvents"
+      ],
+      "paths": [
+        "Skillscout/FileWatcher.swift"
+      ]
+    },
+    {
+      "id": "updater",
+      "name": "AppUpdater",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "Checks GitHub releases once a day and installs updates",
+      "paths": [
+        "Skillscout/AppUpdater.swift"
+      ]
+    },
+    {
+      "id": "cli",
+      "name": "skillscout",
+      "kind": "cli",
+      "group": "cli",
+      "summary": "Lists, shows, adds and uninstalls skills from the terminal",
+      "tech": [
+        "Swift"
+      ],
+      "paths": [
+        "CLI"
+      ]
+    },
+    {
+      "id": "scanner",
+      "name": "SkillScanner",
+      "kind": "service",
+      "group": "core",
+      "summary": "Finds every SKILL.md, reads its frontmatter and groups the copies of a skill",
+      "paths": [
+        "Skillscout/SkillScanner.swift",
+        "Skillscout/Models.swift"
+      ]
+    },
+    {
+      "id": "prompt-library",
+      "name": "PromptLibrary",
+      "kind": "service",
+      "group": "core",
+      "summary": "Parses the chats of 8 agents and detects when a chat loads a skill",
+      "tech": [
+        "SQLite3"
+      ],
+      "paths": [
+        "Skillscout/PromptLibrary.swift",
+        "Skillscout/PromptLibrary+Tools.swift"
+      ]
+    },
+    {
+      "id": "installer",
+      "name": "SkillInstaller",
+      "kind": "service",
+      "group": "core",
+      "summary": "Adds skills to other agents, saves drafts, and uninstalls skills",
+      "tech": [
+        "Symlinks"
+      ],
+      "paths": [
+        "Skillscout/SkillInstaller.swift"
+      ]
+    },
+    {
+      "id": "analyzer",
+      "name": "Analyzer",
+      "kind": "service",
+      "group": "core",
+      "summary": "Builds the prompts for ideas, drafts and explanations, and parses the replies",
+      "paths": [
+        "Skillscout/Analyzer.swift"
+      ]
+    },
+    {
+      "id": "ai-engine",
+      "name": "AIEngine",
+      "kind": "service",
+      "group": "core",
+      "summary": "Runs the Codex or Claude Code CLI with the login shell PATH",
+      "paths": [
+        "Skillscout/AIEngine.swift"
+      ]
+    },
+    {
+      "id": "skills",
+      "name": "Skills folders",
+      "kind": "storage",
+      "group": "disk",
+      "summary": "The skills folders of Cursor, Claude Code, Codex and 5 more agents",
+      "tech": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "id": "chats",
+      "name": "Agent chats",
+      "kind": "database",
+      "group": "disk",
+      "summary": "Local chat histories as JSONL files and SQLite databases"
+    },
+    {
+      "id": "state",
+      "name": "App data",
+      "kind": "storage",
+      "group": "disk",
+      "summary": "state.json and the parsed chats cache",
+      "tech": [
+        "JSON"
+      ]
+    },
+    {
+      "id": "trash",
+      "name": "Trash",
+      "kind": "storage",
+      "group": "disk",
+      "summary": "Where uninstalled and merged skills go, so they can come back"
+    },
+    {
+      "id": "agents",
+      "name": "Codex / Claude Code",
+      "kind": "external",
+      "group": "external",
+      "summary": "Headless agent CLIs that write the ideas, drafts and merges"
+    },
+    {
+      "id": "github",
+      "name": "GitHub Releases",
+      "kind": "external",
+      "group": "external",
+      "summary": "Where updates come from"
+    }
+  ],
+  "edges": [
+    {
+      "from": "you",
+      "to": "views",
+      "label": "browses skills"
+    },
+    {
+      "from": "you",
+      "to": "cli",
+      "label": "runs commands"
+    },
+    {
+      "from": "views",
+      "to": "app-store",
+      "label": "reads state"
+    },
+    {
+      "from": "app-store",
+      "to": "file-watcher",
+      "label": "starts watching"
+    },
+    {
+      "from": "app-store",
+      "to": "scanner",
+      "label": "scans skills"
+    },
+    {
+      "from": "app-store",
+      "to": "prompt-library",
+      "label": "counts usage"
+    },
+    {
+      "from": "app-store",
+      "to": "installer",
+      "label": "adds skills"
+    },
+    {
+      "from": "app-store",
+      "to": "analyzer",
+      "label": "asks AI"
+    },
+    {
+      "from": "app-store",
+      "to": "state",
+      "label": "saves state",
+      "kind": "writes"
+    },
+    {
+      "from": "updater",
+      "to": "github",
+      "label": "checks releases"
+    },
+    {
+      "from": "file-watcher",
+      "to": "skills",
+      "label": "watches",
+      "kind": "reads"
+    },
+    {
+      "from": "cli",
+      "to": "scanner",
+      "label": "lists skills"
+    },
+    {
+      "from": "cli",
+      "to": "prompt-library",
+      "label": "counts usage"
+    },
+    {
+      "from": "cli",
+      "to": "installer",
+      "label": "adds, uninstalls"
+    },
+    {
+      "from": "cli",
+      "to": "analyzer",
+      "label": "suggests, explains"
+    },
+    {
+      "from": "scanner",
+      "to": "skills",
+      "label": "reads SKILL.md",
+      "kind": "reads"
+    },
+    {
+      "from": "prompt-library",
+      "to": "chats",
+      "label": "parses chats",
+      "kind": "reads"
+    },
+    {
+      "from": "prompt-library",
+      "to": "state",
+      "label": "caches parses",
+      "kind": "writes"
+    },
+    {
+      "from": "installer",
+      "to": "skills",
+      "label": "links skills",
+      "kind": "writes"
+    },
+    {
+      "from": "installer",
+      "to": "trash",
+      "label": "moves old copies",
+      "kind": "writes"
+    },
+    {
+      "from": "analyzer",
+      "to": "ai-engine",
+      "label": "sends prompts"
+    },
+    {
+      "from": "ai-engine",
+      "to": "agents",
+      "label": "runs headless"
+    }
+  ],
+  "entities": [
+    {
+      "id": "saved-state",
+      "name": "state.json",
+      "store": "state",
+      "summary": "Everything Skillscout remembers between launches, except the chats",
+      "details": [
+        "Saved a moment after each change, in one write",
+        "Optional fields keep older files loading"
+      ],
+      "paths": [
+        "Skillscout/AppStore.swift"
+      ],
+      "fields": [
+        {
+          "name": "suggestions",
+          "type": "[Suggestion]",
+          "ref": "suggestion"
+        },
+        {
+          "name": "dismissed",
+          "type": "[String]",
+          "note": "ideas you turned down"
+        },
+        {
+          "name": "explanations",
+          "type": "[String: String]",
+          "note": "AI explanations, by skill"
+        },
+        {
+          "name": "analyzedIDs",
+          "type": "[String]",
+          "note": "prompts already sent for ideas"
+        },
+        {
+          "name": "lastAnalysis",
+          "type": "Date?"
+        }
+      ]
+    },
+    {
+      "id": "suggestion",
+      "name": "Suggestion",
+      "store": "state",
+      "summary": "One skill idea from the AI, with the prompts that inspired it",
+      "paths": [
+        "Skillscout/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "title",
+          "type": "String"
+        },
+        {
+          "name": "summary",
+          "type": "String"
+        },
+        {
+          "name": "why",
+          "type": "String",
+          "note": "the requests it would save you"
+        },
+        {
+          "name": "examples",
+          "type": "[Prompt]",
+          "ref": "prompt"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "draft",
+          "type": "String?",
+          "note": "the SKILL.md the AI wrote"
+        }
+      ]
+    },
+    {
+      "id": "prompt",
+      "name": "Prompt",
+      "store": "state",
+      "summary": "One request you typed in a chat, kept as an example",
+      "paths": [
+        "Skillscout/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true,
+          "note": "chat file and line"
+        },
+        {
+          "name": "tool",
+          "type": "Tool",
+          "note": "which agent"
+        },
+        {
+          "name": "project",
+          "type": "String"
+        },
+        {
+          "name": "date",
+          "type": "Date"
+        },
+        {
+          "name": "text",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "id": "chats-cache",
+      "name": "chats-cache.json",
+      "store": "state",
+      "summary": "What each chat file held when it was last parsed, so a launch only parses new chats",
+      "details": [
+        "A file is parsed again when its size or date changes"
+      ],
+      "paths": [
+        "Skillscout/PromptLibrary.swift"
+      ],
+      "fields": [
+        {
+          "name": "files",
+          "type": "[String: ParsedFile]",
+          "ref": "parsed-file",
+          "note": "by chat file path"
+        }
+      ]
+    },
+    {
+      "id": "parsed-file",
+      "name": "ParsedFile",
+      "store": "state",
+      "summary": "The prompts and skill uses found in one chat file",
+      "paths": [
+        "Skillscout/PromptLibrary.swift"
+      ],
+      "fields": [
+        {
+          "name": "size",
+          "type": "Int"
+        },
+        {
+          "name": "modified",
+          "type": "Date"
+        },
+        {
+          "name": "prompts",
+          "type": "[Prompt]",
+          "ref": "prompt"
+        }
+      ]
+    },
+    {
+      "id": "usage",
+      "name": "usage.json",
+      "store": "state",
+      "summary": "How many chats used each skill, counted once a day",
+      "paths": [
+        "Skillscout/AppStore.swift"
+      ],
+      "fields": [
+        {
+          "name": "skill",
+          "type": "String",
+          "key": true,
+          "ref": "skill"
+        },
+        {
+          "name": "chats",
+          "type": "Int"
+        },
+        {
+          "name": "lastUsed",
+          "type": "Date"
+        }
+      ]
+    },
+    {
+      "id": "skill",
+      "name": "SKILL.md",
+      "store": "skills",
+      "summary": "One skill: a folder with a SKILL.md that tells an agent when and how to use it",
+      "details": [
+        "Read by Cursor, Claude Code, Codex and 5 more agents",
+        "Skillscout changes it only through the Installer",
+        "Copies in several agents' folders group by name"
+      ],
+      "paths": [
+        "Skillscout/SkillScanner.swift"
+      ],
+      "fields": [
+        {
+          "name": "name",
+          "type": "String",
+          "key": true,
+          "note": "frontmatter, and the folder name"
+        },
+        {
+          "name": "description",
+          "type": "String",
+          "note": "when an agent should load it"
+        },
+        {
+          "name": "body",
+          "type": "Markdown",
+          "note": "the instructions"
+        }
+      ]
+    }
+  ]
+}

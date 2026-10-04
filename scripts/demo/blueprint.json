@@ -1,0 +1,1095 @@
+{
+  "name": "Blueprint",
+  "summary": "A SwiftUI Mac app that draws the architecture of your apps and shows how it changes between versions, plus the blueprint command agents use to map them.",
+  "walkthrough": [
+    {
+      "title": "An agent maps an app",
+      "text": "The blueprint command checks the JSON and saves it, with the hash of every file in the app.",
+      "nodes": [
+        "agent",
+        "cli",
+        "validation",
+        "library",
+        "data"
+      ]
+    },
+    {
+      "title": "The app draws it",
+      "text": "AppStore loads the architecture, and DiagramLayout places the groups in columns.",
+      "nodes": [
+        "app-store",
+        "library",
+        "canvas",
+        "layout"
+      ]
+    },
+    {
+      "title": "Changes get flagged",
+      "text": "FileWatcher notices edits in the app folder, and AppStatus compares the files with the saved hashes.",
+      "nodes": [
+        "watcher",
+        "repos",
+        "status",
+        "app-store"
+      ]
+    },
+    {
+      "title": "Versions compare",
+      "text": "ArchitectureDiff matches components by id and marks what was added, changed or removed.",
+      "nodes": [
+        "diff",
+        "app-store",
+        "views"
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "id": "mac-app",
+      "name": "Mac app"
+    },
+    {
+      "id": "cli",
+      "name": "Command line"
+    },
+    {
+      "id": "core",
+      "name": "Shared core"
+    },
+    {
+      "id": "disk",
+      "name": "On your Mac"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "you",
+      "name": "You",
+      "kind": "user",
+      "summary": "Drops app folders in, explores diagrams, compares versions"
+    },
+    {
+      "id": "agent",
+      "name": "Coding agent",
+      "kind": "user",
+      "summary": "Maps an app's architecture and keeps it current"
+    },
+    {
+      "id": "views",
+      "name": "Views",
+      "kind": "ui",
+      "group": "mac-app",
+      "summary": "The sidebar, toolbar, timeline, banners and inspector",
+      "tech": [
+        "SwiftUI"
+      ],
+      "paths": [
+        "Blueprint/ContentView.swift",
+        "Blueprint/DetailView.swift",
+        "Blueprint/Inspector.swift"
+      ]
+    },
+    {
+      "id": "canvas",
+      "name": "Diagram canvas",
+      "kind": "ui",
+      "group": "mac-app",
+      "summary": "The zoomable canvas with groups, animated connections, cards and a minimap",
+      "tech": [
+        "SwiftUI",
+        "Canvas"
+      ],
+      "paths": [
+        "Blueprint/DiagramCanvas.swift",
+        "Blueprint/NodeCard.swift",
+        "Blueprint/Theme.swift"
+      ]
+    },
+    {
+      "id": "layout",
+      "name": "DiagramLayout",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "Places groups in columns that follow the connections and routes the curves",
+      "paths": [
+        "Blueprint/Layout.swift"
+      ],
+      "details": [
+        "Ranks groups into columns that keep connections short",
+        "Routes long connections through the gaps between boxes"
+      ]
+    },
+    {
+      "id": "app-store",
+      "name": "AppStore",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "The observable state: tracked apps, the version shown, the comparison",
+      "tech": [
+        "Observation"
+      ],
+      "paths": [
+        "Blueprint/AppStore.swift",
+        "Blueprint/BlueprintApp.swift"
+      ]
+    },
+    {
+      "id": "watcher",
+      "name": "FileWatcher",
+      "kind": "service",
+      "group": "mac-app",
+      "summary": "Watches Blueprint's data and every tracked folder",
+      "tech": [
+        "FSEvents"
+      ],
+      "paths": [
+        "Blueprint/FileWatcher.swift"
+      ]
+    },
+    {
+      "id": "cli",
+      "name": "blueprint",
+      "kind": "cli",
+      "group": "cli",
+      "summary": "Adds apps, saves architectures and versions, prints status and diffs",
+      "paths": [
+        "CLI"
+      ]
+    },
+    {
+      "id": "library",
+      "name": "Library",
+      "kind": "service",
+      "group": "core",
+      "summary": "Reads and writes tracked apps, architectures and versions",
+      "paths": [
+        "Blueprint/Core/Library.swift",
+        "Blueprint/Core/Models.swift"
+      ]
+    },
+    {
+      "id": "validation",
+      "name": "Validation",
+      "kind": "service",
+      "group": "core",
+      "summary": "Checks an architecture and explains every problem",
+      "paths": [
+        "Blueprint/Core/Validation.swift"
+      ]
+    },
+    {
+      "id": "diff",
+      "name": "ArchitectureDiff",
+      "kind": "service",
+      "group": "core",
+      "summary": "Compares two versions by component id",
+      "paths": [
+        "Blueprint/Core/Diff.swift"
+      ]
+    },
+    {
+      "id": "status",
+      "name": "AppStatus",
+      "kind": "service",
+      "group": "core",
+      "summary": "Tells which files and components changed since the last save",
+      "paths": [
+        "Blueprint/Core/Status.swift",
+        "Blueprint/Core/Git.swift"
+      ],
+      "details": [
+        "Compares content hashes, so commits don't matter",
+        "Ignores docs and images"
+      ]
+    },
+    {
+      "id": "data",
+      "name": "Blueprint data",
+      "kind": "storage",
+      "group": "disk",
+      "summary": "Tracked apps, current architectures, manifests and versions in Application Support",
+      "tech": [
+        "JSON"
+      ]
+    },
+    {
+      "id": "repos",
+      "name": "App folders",
+      "kind": "storage",
+      "group": "disk",
+      "summary": "The git repositories of the tracked apps, only ever read",
+      "tech": [
+        "git"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "you",
+      "to": "views",
+      "label": "explores"
+    },
+    {
+      "from": "agent",
+      "to": "cli",
+      "label": "maps apps"
+    },
+    {
+      "from": "views",
+      "to": "app-store",
+      "label": "reads state"
+    },
+    {
+      "from": "views",
+      "to": "canvas",
+      "label": "shows diagram"
+    },
+    {
+      "from": "canvas",
+      "to": "layout",
+      "label": "places nodes"
+    },
+    {
+      "from": "app-store",
+      "to": "library",
+      "label": "loads apps"
+    },
+    {
+      "from": "app-store",
+      "to": "diff",
+      "label": "compares versions"
+    },
+    {
+      "from": "app-store",
+      "to": "status",
+      "label": "checks freshness"
+    },
+    {
+      "from": "app-store",
+      "to": "watcher",
+      "label": "starts watching"
+    },
+    {
+      "from": "watcher",
+      "to": "data",
+      "label": "watches",
+      "kind": "reads"
+    },
+    {
+      "from": "watcher",
+      "to": "repos",
+      "label": "watches",
+      "kind": "reads"
+    },
+    {
+      "from": "cli",
+      "to": "validation",
+      "label": "checks JSON"
+    },
+    {
+      "from": "cli",
+      "to": "library",
+      "label": "saves"
+    },
+    {
+      "from": "cli",
+      "to": "diff",
+      "label": "prints diffs"
+    },
+    {
+      "from": "cli",
+      "to": "status",
+      "label": "prints status"
+    },
+    {
+      "from": "library",
+      "to": "data",
+      "label": "reads and writes",
+      "kind": "writes"
+    },
+    {
+      "from": "status",
+      "to": "repos",
+      "label": "runs git",
+      "kind": "reads"
+    }
+  ],
+  "flows": [
+    {
+      "id": "map-an-app",
+      "title": "Map an app",
+      "goal": "See how one of your apps is built",
+      "actor": "user",
+      "area": "Mapping",
+      "steps": [
+        {
+          "id": "drop",
+          "title": "Drop the app's folder in",
+          "kind": "action",
+          "lane": "You",
+          "nodes": [
+            "views",
+            "app-store",
+            "library"
+          ]
+        },
+        {
+          "id": "prompt",
+          "title": "Copy the prompt for your agent",
+          "kind": "action",
+          "lane": "You",
+          "nodes": [
+            "views"
+          ]
+        },
+        {
+          "id": "map",
+          "title": "The agent reads the code",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "agent",
+            "cli"
+          ],
+          "text": "Then saves the architecture with blueprint set."
+        },
+        {
+          "id": "check",
+          "title": "Is the JSON valid?",
+          "kind": "decision",
+          "lane": "Blueprint",
+          "nodes": [
+            "validation"
+          ],
+          "next": [
+            {
+              "to": "save",
+              "label": "yes"
+            },
+            {
+              "to": "fix",
+              "label": "errors"
+            }
+          ]
+        },
+        {
+          "id": "fix",
+          "title": "The agent fixes the errors",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "cli"
+          ],
+          "text": "Every error says what to change.",
+          "next": [
+            {
+              "to": "check"
+            }
+          ]
+        },
+        {
+          "id": "save",
+          "title": "The architecture is saved",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "library",
+            "data"
+          ],
+          "text": "With the hash of every file."
+        },
+        {
+          "id": "draw",
+          "title": "The diagram appears",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "app-store",
+            "canvas",
+            "layout"
+          ]
+        },
+        {
+          "id": "done",
+          "title": "You explore it",
+          "kind": "done",
+          "lane": "You",
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "id": "stay-current",
+      "title": "Keep it up to date",
+      "goal": "Know when the diagram no longer matches the code",
+      "actor": "user",
+      "area": "Status",
+      "steps": [
+        {
+          "id": "edit",
+          "title": "You change the code",
+          "kind": "action",
+          "lane": "You",
+          "nodes": []
+        },
+        {
+          "id": "notice",
+          "title": "Blueprint notices",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "watcher",
+            "status"
+          ],
+          "text": "Within seconds, committed or not."
+        },
+        {
+          "id": "flag",
+          "title": "Touched components get a badge",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "canvas"
+          ]
+        },
+        {
+          "id": "paste",
+          "title": "Paste the prompt into your agent",
+          "kind": "action",
+          "lane": "You",
+          "nodes": [
+            "views"
+          ]
+        },
+        {
+          "id": "update",
+          "title": "The agent updates the map",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "cli",
+            "library"
+          ]
+        },
+        {
+          "id": "done",
+          "title": "The diagram matches again",
+          "kind": "done",
+          "lane": "You",
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "id": "compare-versions",
+      "title": "Compare two versions",
+      "goal": "See what changed between releases",
+      "actor": "user",
+      "area": "Versions",
+      "steps": [
+        {
+          "id": "snapshot",
+          "title": "Save a version at each release",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "cli",
+            "library"
+          ]
+        },
+        {
+          "id": "pick",
+          "title": "Click between two versions",
+          "kind": "action",
+          "lane": "You",
+          "nodes": [
+            "views"
+          ]
+        },
+        {
+          "id": "diff",
+          "title": "The changes light up",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "diff",
+            "canvas"
+          ],
+          "text": "New in green, changed in amber, removed in red."
+        },
+        {
+          "id": "done",
+          "title": "You see what moved",
+          "kind": "done",
+          "lane": "You",
+          "nodes": []
+        }
+      ]
+    },
+    {
+      "id": "notice-changes",
+      "title": "Notice code changes",
+      "goal": "Know when an architecture falls behind its code",
+      "actor": "app",
+      "area": "Status",
+      "steps": [
+        {
+          "id": "watch",
+          "title": "A file in an app folder changes",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "watcher"
+          ]
+        },
+        {
+          "id": "hash",
+          "title": "Status hashes the files",
+          "text": "Only files git doesn't ignore, read-only.",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "status",
+            "repos"
+          ]
+        },
+        {
+          "id": "changed",
+          "title": "Different from the manifest?",
+          "kind": "decision",
+          "lane": "Blueprint",
+          "nodes": [
+            "status"
+          ],
+          "next": [
+            {
+              "to": "flag",
+              "label": "yes"
+            },
+            {
+              "to": "quiet",
+              "label": "no"
+            }
+          ]
+        },
+        {
+          "id": "flag",
+          "title": "Touched components get a badge",
+          "kind": "done",
+          "lane": "Blueprint",
+          "nodes": [
+            "canvas"
+          ]
+        },
+        {
+          "id": "quiet",
+          "title": "It stays up to date",
+          "kind": "done",
+          "lane": "Blueprint"
+        }
+      ]
+    },
+    {
+      "id": "agent-saves",
+      "title": "An agent saves an architecture",
+      "goal": "Get the map on screen as soon as the agent finishes",
+      "actor": "agent",
+      "area": "Mapping",
+      "steps": [
+        {
+          "id": "run",
+          "title": "The agent runs blueprint set",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "cli"
+          ]
+        },
+        {
+          "id": "check",
+          "title": "The checks run",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "validation"
+          ]
+        },
+        {
+          "id": "save",
+          "title": "Saved with a manifest",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "library",
+            "data"
+          ]
+        },
+        {
+          "id": "done",
+          "title": "The app redraws it",
+          "kind": "done",
+          "lane": "Blueprint",
+          "nodes": [
+            "canvas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "map-past-releases",
+      "title": "Map past releases",
+      "goal": "See how an app grew, release by release",
+      "actor": "agent",
+      "area": "Versions",
+      "steps": [
+        {
+          "id": "extract",
+          "title": "Extract a tag with git archive",
+          "text": "Into /tmp, so the repo is never touched.",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "repos"
+          ]
+        },
+        {
+          "id": "write",
+          "title": "Write that release's architecture",
+          "kind": "action",
+          "lane": "Agent",
+          "nodes": [
+            "agent"
+          ]
+        },
+        {
+          "id": "save",
+          "title": "Save it as a past version",
+          "kind": "system",
+          "lane": "Blueprint",
+          "nodes": [
+            "cli",
+            "library"
+          ]
+        },
+        {
+          "id": "done",
+          "title": "The timeline shows it",
+          "kind": "done",
+          "lane": "Blueprint",
+          "nodes": [
+            "views"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ship-blueprint",
+      "title": "Ship a new build",
+      "goal": "Get the newest app and command onto this Mac",
+      "actor": "owner",
+      "area": "Releases",
+      "steps": [
+        {
+          "id": "build",
+          "title": "Run build-release.sh",
+          "kind": "action",
+          "lane": "Owner"
+        },
+        {
+          "id": "check",
+          "title": "Run the layout fuzz check",
+          "kind": "action",
+          "lane": "Owner",
+          "nodes": [
+            "layout"
+          ]
+        },
+        {
+          "id": "install",
+          "title": "Replace the app in Applications",
+          "kind": "action",
+          "lane": "Owner"
+        },
+        {
+          "id": "done",
+          "title": "Agents use the new command",
+          "kind": "done",
+          "lane": "Agent",
+          "nodes": [
+            "cli"
+          ]
+        }
+      ]
+    }
+  ],
+  "entities": [
+    {
+      "id": "tracked-app",
+      "name": "app.json",
+      "store": "data",
+      "summary": "One tracked folder: where the app lives, and when you added it",
+      "paths": [
+        "Blueprint/Core/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true,
+          "note": "from the folder name"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "path",
+          "type": "String",
+          "note": "the app folder"
+        },
+        {
+          "name": "addedAt",
+          "type": "Date"
+        }
+      ]
+    },
+    {
+      "id": "snapshot",
+      "name": "Snapshot",
+      "store": "data",
+      "summary": "An architecture saved at one moment: current.json, or a version like versions/1.2.0.json",
+      "details": [
+        "current.json is replaced on every blueprint set",
+        "A version is a copy that never changes",
+        "Removing one moves its file to the Trash"
+      ],
+      "paths": [
+        "Blueprint/Core/Models.swift",
+        "Blueprint/Core/Library.swift"
+      ],
+      "fields": [
+        {
+          "name": "version",
+          "type": "String?",
+          "note": "empty in current.json"
+        },
+        {
+          "name": "savedAt",
+          "type": "Date"
+        },
+        {
+          "name": "commit",
+          "type": "String?",
+          "note": "short hash at save time"
+        },
+        {
+          "name": "architecture",
+          "type": "Architecture",
+          "ref": "architecture"
+        }
+      ]
+    },
+    {
+      "id": "manifest",
+      "name": "manifest.json",
+      "store": "data",
+      "summary": "The hash of every file git doesn't ignore, from when the current architecture was saved",
+      "details": [
+        "Compared with a fresh one to tell what changed",
+        "Rewritten on every blueprint set"
+      ],
+      "paths": [
+        "Blueprint/Core/Git.swift",
+        "Blueprint/Core/Status.swift"
+      ],
+      "fields": [
+        {
+          "name": "path",
+          "type": "String",
+          "key": true,
+          "note": "relative to the app folder"
+        },
+        {
+          "name": "hash",
+          "type": "String",
+          "note": "of the file's contents"
+        }
+      ]
+    },
+    {
+      "id": "architecture",
+      "name": "Architecture",
+      "store": "data",
+      "summary": "What an agent wrote with blueprint set: components, connections, walkthrough, flows and data",
+      "details": [
+        "Decoding is lenient: missing lists are empty",
+        "blueprint set checks it strictly before saving"
+      ],
+      "paths": [
+        "Blueprint/Core/Models.swift",
+        "Blueprint/Core/Validation.swift"
+      ],
+      "fields": [
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "summary",
+          "type": "String?"
+        },
+        {
+          "name": "walkthrough",
+          "type": "[Step]",
+          "note": "3 to 6 steps for a newcomer"
+        },
+        {
+          "name": "groups",
+          "type": "[Group]"
+        },
+        {
+          "name": "nodes",
+          "type": "[Node]",
+          "ref": "node"
+        },
+        {
+          "name": "edges",
+          "type": "[Edge]",
+          "ref": "edge"
+        },
+        {
+          "name": "flows",
+          "type": "[Flow]",
+          "ref": "flow"
+        },
+        {
+          "name": "entities",
+          "type": "[Entity]",
+          "ref": "entity"
+        }
+      ]
+    },
+    {
+      "id": "node",
+      "name": "Node",
+      "store": "data",
+      "summary": "One component of the app, with its role in it",
+      "paths": [
+        "Blueprint/Core/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true,
+          "note": "versions compare by it"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "kind",
+          "type": "String"
+        },
+        {
+          "name": "group",
+          "type": "String?"
+        },
+        {
+          "name": "summary",
+          "type": "String?"
+        },
+        {
+          "name": "details",
+          "type": "[String]"
+        },
+        {
+          "name": "tech",
+          "type": "[String]"
+        },
+        {
+          "name": "paths",
+          "type": "[String]",
+          "note": "what status checks"
+        }
+      ]
+    },
+    {
+      "id": "edge",
+      "name": "Edge",
+      "store": "data",
+      "summary": "One connection between two components",
+      "paths": [
+        "Blueprint/Core/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "from",
+          "type": "String",
+          "ref": "node"
+        },
+        {
+          "name": "to",
+          "type": "String",
+          "ref": "node"
+        },
+        {
+          "name": "label",
+          "type": "String?"
+        },
+        {
+          "name": "kind",
+          "type": "String?",
+          "note": "calls, reads, writes or sends"
+        }
+      ]
+    },
+    {
+      "id": "flow",
+      "name": "Flow",
+      "store": "data",
+      "summary": "One thing people do with the app, as steps in lanes",
+      "paths": [
+        "Blueprint/Core/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true
+        },
+        {
+          "name": "title",
+          "type": "String"
+        },
+        {
+          "name": "goal",
+          "type": "String?"
+        },
+        {
+          "name": "steps",
+          "type": "[FlowStep]"
+        }
+      ]
+    },
+    {
+      "id": "entity",
+      "name": "Entity",
+      "store": "data",
+      "summary": "One kind of record the app stores, field by field",
+      "paths": [
+        "Blueprint/Core/Models.swift"
+      ],
+      "fields": [
+        {
+          "name": "id",
+          "type": "String",
+          "key": true,
+          "note": "versions compare by it"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "store",
+          "type": "String?",
+          "ref": "node"
+        },
+        {
+          "name": "summary",
+          "type": "String?"
+        },
+        {
+          "name": "fields",
+          "type": "[Field]",
+          "note": "compared by name"
+        },
+        {
+          "name": "paths",
+          "type": "[String]"
+        }
+      ]
+    }
+  ],
+  "explainers": [
+    {
+      "id": "how-an-app-gets-mapped",
+      "title": "How an app gets mapped",
+      "summary": "From a folder you drop in to the diagram on screen",
+      "scenes": [
+        {
+          "title": "Agents do the mapping",
+          "text": "Blueprint never reads your code to draw it. Your coding agent does, with the blueprint command.",
+          "nodes": [
+            "you",
+            "agent",
+            "cli"
+          ]
+        },
+        {
+          "title": "The JSON gets checked",
+          "text": "blueprint set rejects broken ids and references, so the agent fixes them before anything is saved.",
+          "flow": "map-an-app",
+          "steps": [
+            "map",
+            "check",
+            "fix"
+          ]
+        },
+        {
+          "title": "Saved with a manifest",
+          "text": "The architecture is saved with the hash of every file, to tell later what changed.",
+          "entities": [
+            "snapshot",
+            "architecture",
+            "manifest"
+          ]
+        },
+        {
+          "title": "The app redraws it",
+          "text": "A file watcher sees the save, and the layout places every component in its group.",
+          "nodes": [
+            "watcher",
+            "app-store",
+            "layout",
+            "canvas"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "how-versions-compare",
+      "title": "How versions are compared",
+      "summary": "Why ids matter, and how removed parts still show up",
+      "scenes": [
+        {
+          "title": "A version is a copy",
+          "text": "Saving a version copies the current architecture into versions/, and it never changes again.",
+          "entities": [
+            "snapshot",
+            "tracked-app"
+          ]
+        },
+        {
+          "title": "Matched by id",
+          "text": "Diff compares components and entities by id, so an agent keeps ids stable even when it renames things.",
+          "nodes": [
+            "diff",
+            "library"
+          ]
+        },
+        {
+          "title": "Click between two versions",
+          "text": "The timeline picks the two versions, and the canvas colors what was added, changed and removed.",
+          "flow": "compare-versions",
+          "steps": [
+            "pick",
+            "diff"
+          ]
+        }
+      ]
+    }
+  ]
+}

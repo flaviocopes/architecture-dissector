@@ -1,0 +1,49 @@
+name: Blueprint
+options:
+  bundleIdPrefix: com.flaviocopes
+  deploymentTarget:
+    macOS: "15.0"
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+targets:
+  Blueprint:
+    type: application
+    platform: macOS
+    sources:
+      - Blueprint
+      - path: skill/blueprint/SKILL.md
+        buildPhase: resources
+    dependencies:
+      - target: BlueprintCLI
+        embed: true
+        copy:
+          destination: wrapper
+          subpath: Contents/Helpers
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.flaviocopes.blueprint
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Support/Info.plist
+        INFOPLIST_KEY_CFBundleDisplayName: Blueprint
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.developer-tools
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
+  BlueprintCLI:
+    type: tool
+    platform: macOS
+    sources:
+      - CLI
+      - Blueprint/Core
+    settings:
+      base:
+        PRODUCT_NAME: blueprint
+        PRODUCT_BUNDLE_IDENTIFIER: com.flaviocopes.blueprint.cli
+        GENERATE_INFOPLIST_FILE: YES
+        CREATE_INFOPLIST_SECTION_IN_BINARY: YES
+        SKIP_INSTALL: YES
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Manual
