@@ -46,7 +46,7 @@ You don't draw anything in Blueprint. Your coding agents map each app with the `
    This app is mapped in Blueprint. Before changing it, read the map with `blueprint show --json`, or `blueprint show --data --json` for what it stores. After changing its structure, workflows or stored data, run `blueprint status`, update the map as `blueprint guide` explains, and save it with `blueprint set`.
    ```
 
-When you ship a release, ask the agent to save a version, or run `blueprint snapshot --version 1.2.0` yourself. Later on, `blueprint list --missing` tells an agent which apps still need their flows, data or explainers, so "fill in what's missing in Blueprint" is enough for it to work through them all.
+When you ship a release, ask the agent to save a version, or run `blueprint snapshot --version 1.2.0` yourself. Later on, `blueprint list` tells an agent which apps still need their flows, data or explainers, and `--missing data` lists only the ones without data, so "fill in what's missing in Blueprint" is enough for it to work through them all.
 
 ## Features
 
