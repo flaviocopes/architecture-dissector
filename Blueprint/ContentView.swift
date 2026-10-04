@@ -19,7 +19,13 @@ struct ContentView: View {
       withAnimation { columns = empty ? .detailOnly : .all }
     }
     .onDrop(of: [.fileURL], isTargeted: $store.isDropTargeted) { providers in
-      Task { store.add(await folders(from: providers)) }
+      // Each item loads on its own, and only its URL crosses back, since item providers aren't sendable.
+      for provider in providers {
+        _ = provider.loadObject(ofClass: URL.self) { [tracker = self.store] url, _ in
+          guard let url, isFolder(url) else { return }
+          Task { @MainActor in tracker.add([url]) }
+        }
+      }
       return true
     }
     .overlay {
@@ -39,19 +45,10 @@ struct ContentView: View {
   }
 }
 
-/// The folders among dropped items. Files are skipped, since Blueprint tracks app folders.
-func folders(from providers: [NSItemProvider]) async -> [URL] {
-  var urls: [URL] = []
-  for provider in providers {
-    let url = await withCheckedContinuation { (continuation: CheckedContinuation<URL?, Never>) in
-      _ = provider.loadObject(ofClass: URL.self) { url, _ in continuation.resume(returning: url) }
-    }
-    var isDirectory: ObjCBool = false
-    if let url, FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue {
-      urls.append(url)
-    }
-  }
-  return urls
+/// Whether a dropped item is a folder. Files are skipped, since Blueprint tracks app folders.
+func isFolder(_ url: URL) -> Bool {
+  var isDirectory: ObjCBool = false
+  return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
 }
 
 struct DropOverlay: View {
