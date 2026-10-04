@@ -205,9 +205,12 @@ final class ActiveWindow: NSWindow {
 @MainActor
 func capture(_ store: AppStore, host: NSHostingController<AnyView>, window: NSWindow) async {
   store.start()
-  // SCENES=screenshot-level renders only the scenes whose names start with it.
-  let prefix = ProcessInfo.processInfo.environment["SCENES"] ?? ""
-  for scene in scenes where scene.name.hasPrefix(prefix) {
+  // SCENES=screenshot,screenshot-level* renders only those scenes; a name ending in * matches the start of names.
+  let wanted = (ProcessInfo.processInfo.environment["SCENES"] ?? "").split(separator: ",").map(String.init)
+  func isWanted(_ name: String) -> Bool {
+    wanted.isEmpty || wanted.contains { $0.hasSuffix("*") ? name.hasPrefix($0.dropLast()) : name == $0 }
+  }
+  for scene in scenes where isWanted(scene.name) {
     if scene.app != nil, store.apps.isEmpty {
       setenv("BLUEPRINT_HOME", demoHome.path, 1)
       store.reload()

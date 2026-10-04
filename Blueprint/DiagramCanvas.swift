@@ -927,6 +927,9 @@ struct EdgeView: View {
 
   /// Blueprint and Terminal show data moving along a highlighted connection; the quieter themes don't.
   private var flows: Bool { theme == .blueprint || theme == .terminal }
+  /// The pulses' length and spacing, in world points. They stay fixed as you zoom, so the looping phase never jumps.
+  private static let pulse: CGFloat = 10
+  private static let gap: CGFloat = 34
 
   var body: some View {
     let base: (normal: CGFloat, highlighted: CGFloat) = switch theme {
@@ -941,6 +944,11 @@ struct EdgeView: View {
     let inset = ArrowHead.clearance + ArrowHead.lineInset(arrow)
     let orthogonal = DiagramStyle(theme, scheme).isOrthogonal
     ZStack {
+      if isHighlighted, theme == .blueprint {
+        // A soft halo in the line's color, so a lit connection stands out without a costly shadow.
+        RouteShape(route: route, endInset: inset, orthogonal: orthogonal)
+          .stroke(stroke.opacity(scheme == .dark ? 0.26 : 0.18), style: StrokeStyle(lineWidth: width * 3.4, lineCap: .round, lineJoin: .round))
+      }
       RouteShape(route: route, endInset: inset, orthogonal: orthogonal)
         .stroke(stroke, style: StrokeStyle(lineWidth: width, lineCap: orthogonal ? .square : .round, lineJoin: orthogonal ? .miter : .round, dash: dash))
       ArrowShape(route: route, length: arrow, orthogonal: orthogonal)
@@ -948,10 +956,11 @@ struct EdgeView: View {
       ArrowShape(route: route, length: arrow, orthogonal: orthogonal)
         .stroke(stroke, style: StrokeStyle(lineWidth: width * 0.6, lineJoin: .round))
       if isHighlighted, flows {
-        RouteShape(route: route, endInset: ArrowHead.clearance + arrow, orthogonal: orthogonal)
-          .stroke(theme == .terminal ? Color.white : .white.opacity(0.9), style: StrokeStyle(lineWidth: width * 1.6, lineCap: .round, dash: [0.1, 14], dashPhase: phase))
+        // Short pulses inside the line, narrower than it, so data seems to travel through it.
+        RouteShape(route: route, endInset: inset + width, orthogonal: orthogonal)
+          .stroke(.white.opacity(theme == .terminal ? 0.95 : 0.85), style: StrokeStyle(lineWidth: width * 0.45, lineCap: .round, dash: [Self.pulse, Self.gap], dashPhase: phase))
           .onAppear {
-            withAnimation(.linear(duration: 0.9).repeatForever(autoreverses: false)) { phase = -14.1 }
+            withAnimation(.linear(duration: 1.2).repeatForever(autoreverses: false)) { phase = -(Self.pulse + Self.gap) }
           }
       }
     }
