@@ -326,6 +326,7 @@ private struct LevelPill: View {
     .buttonStyle(.plain)
     .onHover { isHovering = $0 }
     .help(level.help)
+    .accessibilityLabel(level.label)
     .accessibilityAddTraits(isSelected ? .isSelected : [])
   }
 }

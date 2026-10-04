@@ -419,13 +419,14 @@ struct DiagramWorld: View {
 
 /// The grid behind a diagram, drawn in screen space so it stays sharp at every zoom: blueprint lines,
 /// a dark screen with scanlines, a plain surface, or the character cells of a sheet of ASCII art.
-struct GridBackground: View, @preconcurrency Animatable {
+struct GridBackground: View, Animatable {
   var scale: CGFloat
   var offset: CGSize
   var scheme: ColorScheme
   var theme: DiagramTheme = .blueprint
 
-  var animatableData: AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>> {
+  /// SwiftUI reads this from its display link thread while a zoom animates, so it can't be main-actor isolated.
+  nonisolated var animatableData: AnimatablePair<CGFloat, AnimatablePair<CGFloat, CGFloat>> {
     get { AnimatablePair(scale, AnimatablePair(offset.width, offset.height)) }
     set {
       scale = newValue.first
