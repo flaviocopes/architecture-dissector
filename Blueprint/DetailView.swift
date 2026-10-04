@@ -60,7 +60,7 @@ struct DetailView: View {
             }
           } else {
             VStack(spacing: 10) {
-              if data.current != nil {
+              if store.mode == .architecture, data.current != nil {
                 LevelPicker()
               }
               if let step = store.tourStep, let diagram = store.diagram, diagram.architecture.walkthrough.indices.contains(step) {
