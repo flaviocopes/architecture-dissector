@@ -114,8 +114,11 @@ The palette button restyles every diagram without moving anything: **Blueprint**
 
 ## The blueprint command
 
+Run `blueprint capabilities` to see what the command can do and what changed in each release. Other agent tools read the same list with `blueprint capabilities --json`.
+
 | Command | What it does |
 |---|---|
+| `blueprint capabilities [--json]` | What blueprint can do, and what changed in each version |
 | `blueprint list [--missing <part>]` | The tracked apps, whether their map is up to date, and what's missing |
 | `blueprint add [folder]` | Track an app folder |
 | `blueprint guide` | How to map an app, for agents |

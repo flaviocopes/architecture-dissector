@@ -61,10 +61,11 @@ struct Arguments {
 }
 
 enum Command: String, CaseIterable {
-  case list, add, show, set, status, snapshot, versions, diff, open, remove, guide
+  case list, add, show, set, status, snapshot, versions, diff, open, remove, guide, capabilities
 
   var synopsis: String {
     switch self {
+    case .capabilities: "capabilities [--json]"
     case .list: "list [--missing <part>] [--json]"
     case .add: "add [folder]"
     case .show: "show [app] [--version <v>] [--data] [--json]"
@@ -81,6 +82,7 @@ enum Command: String, CaseIterable {
 
   var summary: String {
     switch self {
+    case .capabilities: "What blueprint can do, and what changed in each version"
     case .list: "The apps Blueprint tracks, and whether their architecture is up to date"
     case .add: "Track an app folder"
     case .show: "Print an app's architecture"
@@ -97,6 +99,8 @@ enum Command: String, CaseIterable {
 
   var details: String {
     switch self {
+    case .capabilities:
+      "Prints a short summary, the main tasks this command can handle, with an example command for each, and what changed in each release. With --json it prints the same manifest for other tools and agents to read."
     case .list:
       "Lists the tracked apps, with how many components and entities their architecture has, how many versions you saved, whether code changed since the last save, and what's still missing: the architecture itself, the walkthrough, the overview, the notes on connections (when most have none), the flows (none, too few, or some without an actor or area), the explainers, or the data of an app that stores something. With --missing it lists only the apps missing that part, so an agent can add it to each one."
     case .add:
@@ -125,6 +129,7 @@ enum Command: String, CaseIterable {
   var options: [(flag: String, help: String)] {
     let json = ("--json", "Print JSON")
     switch self {
+    case .capabilities: return [json]
     case .list: return [("--missing <part>", "Only the apps missing architecture, walkthrough, overview, notes, flows, data or explainers"), json]
     case .versions, .status: return [json]
     case .add, .remove, .guide: return []
@@ -162,6 +167,7 @@ enum Command: String, CaseIterable {
     case .open: try Commands.open(args)
     case .remove: try Commands.remove(args)
     case .guide: print(Guide.text)
+    case .capabilities: try Manifest.current.print(json: args.json)
     }
   }
 }
@@ -196,9 +202,7 @@ func printHelp(_ command: Command?) {
   }
 }
 
-var version: String {
-  Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "dev"
-}
+var version: String { Manifest.cliVersion }
 
 do {
   let args = try Arguments(Array(CommandLine.arguments.dropFirst()))
