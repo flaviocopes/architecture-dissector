@@ -6,7 +6,7 @@ It also watches each project. When the code moves on, it tells you which parts c
 
 ## Download
 
-Get `Blueprint-1.0.0.zip` from the [latest release](https://github.com/flaviocopes/blueprint/releases/latest), unzip it, and drag Blueprint to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
+Get `Blueprint-1.1.0.zip` from the [latest release](https://github.com/flaviocopes/blueprint/releases/latest), unzip it, and drag Blueprint to your Applications folder. It runs on macOS 15 Sequoia or later, on Apple silicon and Intel Macs.
 
 ### Opening it the first time
 

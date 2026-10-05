@@ -41,6 +41,15 @@ struct Manifest: Encodable {
       ],
       changelog: [
         Release(
+          version: "1.1.0",
+          date: "2026-10-05",
+          changes: [
+            "Architectures have an overview, a few blocks in plain words. show prints it, diff compares it, and list --missing finds apps without one or without connection notes.",
+            "The guide explains how to fill in older versions that miss the flows, data, explainers or overview.",
+            "New capabilities command.",
+          ]
+        ),
+        Release(
           version: "1.0.0",
           date: "2026-10-04",
           changes: [
