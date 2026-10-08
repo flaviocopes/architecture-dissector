@@ -138,7 +138,7 @@ struct NodeCard: View {
     // No .help tooltip: on macOS it takes the card's clicks and hover away from the canvas.
   }
 
-  /// The kind's symbol: a tile with a gradient in Blueprint, a tinted symbol in the other themes, nothing in ASCII.
+  /// The kind's symbol: a tile with a gradient in Architecture Dissector, a tinted symbol in the other themes, nothing in ASCII.
   @ViewBuilder
   private func icon(_ side: CGFloat, _ style: DiagramStyle?) -> some View {
     if let style {
@@ -165,7 +165,7 @@ struct NodeCard: View {
 
   /// The overview card, a name over what it does in plain words, in type big enough to read with the whole
   /// overview in view, or the technical one, which adds the component's points, tech and files.
-  /// `style` is nil in Blueprint.
+  /// `style` is nil in Architecture Dissector.
   @ViewBuilder
   private func detailed(_ style: DiagramStyle?) -> some View {
     if level == .overview {

@@ -594,7 +594,7 @@ struct VersionsMissingPart: View {
       VStack(alignment: .leading, spacing: 10) {
         Text(versions.count > 3 ? "\(versions.count) earlier versions have no \(part)" : "\(versions.formatted(.list(type: .and))) \(one ? "has" : "have") no \(part)")
           .font(.system(size: 14, weight: .semibold))
-        Text("\(one ? "It was" : "They were") saved before \(name) had \(part == "overview" ? "an overview" : part) in Blueprint, so this tab leaves \(one ? "it" : "them") out. An agent can read each version's code from the git history and fill in what's missing. Paste this into one working on \(name).")
+        Text("\(one ? "It was" : "They were") saved before \(name) had \(part == "overview" ? "an overview" : part) in Architecture Dissector, so this tab leaves \(one ? "it" : "them") out. An agent can read each version's code from the git history and fill in what's missing. Paste this into one working on \(name).")
           .font(.system(size: 12.5))
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)

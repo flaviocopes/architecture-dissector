@@ -9,7 +9,7 @@
 import AppKit
 import SwiftUI
 
-let name = "Blueprint"
+let name = "Architecture Dissector"
 let tagline = "See how your apps are built,\nand how they change."
 let chips = ["Architecture", "Every workflow", "Data and explainers"]
 let size = CGSize(width: 1280, height: 560)
@@ -24,7 +24,7 @@ let glow = Color(hex: 0x5B8CFF)
 let muted = Color.white.opacity(0.72)
 
 let root = URL(filePath: #filePath).deletingLastPathComponent().deletingLastPathComponent()
-let iconSource = root.appending(path: "\(name)/AppIcon.icon")
+let iconSource = root.appending(path: "Blueprint/AppIcon.icon")
 let screenshot = root.appending(path: "docs/screenshot-dark.png")
 let output = root.appending(path: "docs/banner.png")
 // scripts/screenshot.sh leaves a 48pt margin around the window for its shadow.
@@ -106,7 +106,7 @@ struct Banner: View {
           .frame(width: 132, height: 132)
           .shadow(color: .black.opacity(0.35), radius: 18, y: 10)
         Text(name)
-          .font(.system(size: 76, weight: .bold))
+          .font(.system(size: 43, weight: .bold))
           .tracking(-1.8)
           .foregroundStyle(.white)
           .padding(.top, 26)

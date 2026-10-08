@@ -36,7 +36,7 @@ enum Commands {
       if let wanted {
         print("Every tracked app has its \(wanted).")
       } else {
-        print("Blueprint doesn't track any apps yet. Add one with: blueprint add <folder>")
+        print("Architecture Dissector doesn't track any apps yet. Add one with: blueprint add <folder>")
       }
       return
     }
@@ -341,11 +341,11 @@ enum Commands {
       if let commits = status.commitsSince, commits > 0 { saved += ", \(Terminal.plural(commits, "commit")) ago" }
     }
     guard status.isRepo else {
-      print("\(name)'s architecture was \(saved). \(app.path) isn't a git repository, so Blueprint can't tell what changed since.")
+      print("\(name)'s architecture was \(saved). \(app.path) isn't a git repository, so Architecture Dissector can't tell what changed since.")
       return
     }
     guard status.hasManifest else {
-      print("\(name)'s architecture was \(saved). Save it again with blueprint set, so Blueprint can track what changes.")
+      print("\(name)'s architecture was \(saved). Save it again with blueprint set, so Architecture Dissector can track what changes.")
       return
     }
     guard status.isStale else {
@@ -370,7 +370,7 @@ enum Commands {
       if status.uncovered.count > 40 { print(dim("  and \(status.uncovered.count - 40) more")) }
     }
     print()
-    print(Terminal.wrap("If these changes affect the architecture, update it: blueprint show --json > /tmp/\(app.id).json, edit the file, then blueprint set --file /tmp/\(app.id).json. If they don't, save it again unchanged so Blueprint knows it's current."))
+    print(Terminal.wrap("If these changes affect the architecture, update it: blueprint show --json > /tmp/\(app.id).json, edit the file, then blueprint set --file /tmp/\(app.id).json. If they don't, save it again unchanged so Architecture Dissector knows it's current."))
   }
 
   struct StatusOutput: Encodable {
@@ -557,7 +557,7 @@ enum Commands {
     try process.run()
     process.waitUntilExit()
     if process.terminationStatus != 0 {
-      throw BlueprintError("Couldn't open the Blueprint app. Open it once from the Finder, then try again.")
+      throw BlueprintError("Couldn't open the Architecture Dissector app. Open it once from the Finder, then try again.")
     }
   }
 

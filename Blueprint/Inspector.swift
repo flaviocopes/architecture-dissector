@@ -812,11 +812,11 @@ struct StatusSection: View {
     InspectorSection("Status") {
       if let status {
         if !status.isRepo {
-          Text("This folder isn't a git repository, so Blueprint can't tell when the code changes.")
+          Text("This folder isn't a git repository, so Architecture Dissector can't tell when the code changes.")
             .font(.callout)
             .foregroundStyle(.secondary)
         } else if !status.hasManifest {
-          Text("Save the architecture again with blueprint set, so Blueprint can track what changes.")
+          Text("Save the architecture again with blueprint set, so Architecture Dissector can track what changes.")
             .font(.callout)
             .foregroundStyle(.secondary)
         } else if !status.isStale {
@@ -984,7 +984,7 @@ struct ExplainersOverview: View {
     VStack(alignment: .leading, spacing: 8) {
       Text("Explainers")
         .font(.system(size: 20, weight: .bold))
-      Text("Short videos about how parts of \(store.name(of: app)) work. Agents write what each scene shows, and Blueprint plays them all in the same style.")
+      Text("Short videos about how parts of \(store.name(of: app)) work. Agents write what each scene shows, and Architecture Dissector plays them all in the same style.")
         .font(.system(size: 13))
         .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)

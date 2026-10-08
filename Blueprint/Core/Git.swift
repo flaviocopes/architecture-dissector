@@ -1,6 +1,6 @@
 import Foundation
 
-/// Read-only git commands. Blueprint never writes to a tracked repo, not even its refs.
+/// Read-only git commands. Architecture Dissector never writes to a tracked repo, not even its refs.
 enum Git {
   static func run(_ arguments: [String], in folder: URL) -> String? {
     let process = Process()

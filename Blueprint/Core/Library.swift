@@ -1,6 +1,6 @@
 import Foundation
 
-/// Where Blueprint keeps its data. `BLUEPRINT_HOME` points it somewhere else, for tests and screenshots.
+/// Where Architecture Dissector keeps its data. `BLUEPRINT_HOME` points it somewhere else, for tests and screenshots.
 ///
 ///     apps/<id>/app.json          the tracked folder
 ///     apps/<id>/current.json      the current architecture
@@ -90,7 +90,7 @@ enum Library {
     return app
   }
 
-  /// Moves the app's Blueprint data, not the app, to the Trash.
+  /// Moves the app's Architecture Dissector data, not the app, to the Trash.
   static func remove(_ app: TrackedApp) throws {
     try FileManager.default.trashItem(at: Paths.folder(app.id), resultingItemURL: nil)
   }
@@ -156,7 +156,7 @@ enum Library {
     let apps = apps()
     guard let query else {
       if let app = containing(cwd.standardizedFileURL.resolvingSymlinksInPath(), in: apps) { return app }
-      throw BlueprintError("This folder isn't inside an app Blueprint tracks. Add it with: blueprint add .")
+      throw BlueprintError("This folder isn't inside an app Architecture Dissector tracks. Add it with: blueprint add .")
     }
 
     let lowered = query.lowercased()
@@ -165,7 +165,7 @@ enum Library {
     }
     let path = URL(fileURLWithPath: (query as NSString).expandingTildeInPath, relativeTo: cwd).standardizedFileURL.resolvingSymlinksInPath()
     if let app = containing(path, in: apps) { return app }
-    throw BlueprintError("Blueprint doesn't track \(query). Run blueprint list to see the apps it tracks.")
+    throw BlueprintError("Architecture Dissector doesn't track \(query). Run blueprint list to see the apps it tracks.")
   }
 
   private static func containing(_ folder: URL, in apps: [TrackedApp]) -> TrackedApp? {

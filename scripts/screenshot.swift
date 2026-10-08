@@ -1,4 +1,4 @@
-// Captures the real Blueprint window for the README, in light and dark.
+// Captures the real Architecture Dissector window for the README, in light and dark.
 // It loads the architectures in scripts/demo into a demo data folder first, so your own data stays untouched.
 // scripts/screenshot.sh compiles it with the app's sources, in place of BlueprintApp.swift.
 
@@ -114,14 +114,15 @@ func buildWelcomeHome() throws {
   }
 }
 
-/// Tracks Skillscout and Blueprint from ~/dev when they're there, with the demo architectures.
+/// Tracks Skill Cabinet and Architecture Dissector from ~/dev when they're there, with the demo architectures.
 func buildDemoHome() throws {
   try? FileManager.default.removeItem(at: demoHome)
   setenv("BLUEPRINT_HOME", demoHome.path, 1)
   let dev = FileManager.default.homeDirectoryForCurrentUser.appending(path: "dev")
 
   func track(_ id: String, _ name: String) throws -> TrackedApp {
-    let app = TrackedApp(id: id, name: name, path: dev.appending(path: id).path, addedAt: .now)
+    let folder = ["blueprint": "architecture-dissector", "skillscout": "skill-cabinet", "cli-tools": "cli-tools-cabinet"][id] ?? id
+    let app = TrackedApp(id: id, name: name, path: dev.appending(path: folder).path, addedAt: .now)
     try Library.write(app, to: Paths.folder(id).appending(path: "app.json"))
     return app
   }
@@ -129,14 +130,14 @@ func buildDemoHome() throws {
     try Architecture.decode(Data(contentsOf: demoData.appending(path: file)))
   }
 
-  _ = try track("cli-tools", "CLI Tools")
-  let skillscout = try track("skillscout", "Skillscout")
+  _ = try track("cli-tools", "CLI Tools Cabinet")
+  let skillscout = try track("skillscout", "Skill Cabinet")
   try Library.savePastVersion(architecture("skillscout-1.0.0.json"), as: "1.0.0", for: skillscout)
   try Library.savePastVersion(architecture("skillscout-1.1.0.json"), as: "1.1.0", for: skillscout)
   try Library.save(architecture("skillscout-1.3.0.json"), for: skillscout)
   try Library.saveVersion("1.3.0", for: skillscout)
 
-  let blueprint = try track("blueprint", "Blueprint")
+  let blueprint = try track("blueprint", "Architecture Dissector")
   try Library.save(architecture("blueprint.json"), for: blueprint)
 
   if let extra {

@@ -26,7 +26,7 @@ struct Manifest: Encodable {
     Manifest(
       name: "blueprint",
       version: cliVersion,
-      summary: "Tracks apps and saves their architecture, flows, data and explainers as JSON for the Blueprint app to draw, and compares versions.",
+      summary: "Tracks apps and saves their architecture, flows, data and explainers as JSON for the Architecture Dissector app to draw, and compares versions.",
       capabilities: [
         Capability(description: "Track an app folder for architecture mapping", command: "blueprint add ~/dev/my-app"),
         Capability(description: "Print the mapping workflow and JSON format for agents", command: "blueprint guide"),
@@ -37,9 +37,10 @@ struct Manifest: Encodable {
         Capability(description: "List tracked apps and what each one is still missing", command: "blueprint list --missing flows --json"),
         Capability(description: "Compare an app's architecture between two versions", command: "blueprint diff myapp --from 1.0.0 --json"),
         Capability(description: "Save the current architecture as a release version", command: "blueprint snapshot myapp --version 1.2.0"),
-        Capability(description: "Open an app in Blueprint and highlight changes since a version", command: "blueprint open myapp --compare 1.0.0"),
+        Capability(description: "Open an app in Architecture Dissector and highlight changes since a version", command: "blueprint open myapp --compare 1.0.0"),
       ],
       changelog: [
+        Release(version: "1.2.0", date: "2026-10-08", changes: ["Renamed the app to Architecture Dissector. The blueprint command is unchanged."]),
         Release(
           version: "1.1.0",
           date: "2026-10-05",
@@ -54,7 +55,7 @@ struct Manifest: Encodable {
           date: "2026-10-04",
           changes: [
             "First release: track apps, map architectures from JSON, save versions, and diff them.",
-            "Commands for status, list --missing, show --data, snapshot, and opening the Blueprint app.",
+            "Commands for status, list --missing, show --data, snapshot, and opening the Architecture Dissector app.",
             "Run blueprint guide for the workflow agents follow when mapping an app.",
           ]
         ),

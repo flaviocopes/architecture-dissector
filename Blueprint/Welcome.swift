@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The first screen: what Blueprint does, a live demo, and the quickest ways to track an app.
+/// The first screen: what Architecture Dissector does, a live demo, and the quickest ways to track an app.
 struct WelcomeView: View {
   @Environment(AppStore.self) private var store
   @State private var projects: [SuggestedProject] = []
@@ -75,14 +75,14 @@ struct WelcomeView: View {
           .resizable()
           .frame(width: 42, height: 42)
           .shadow(color: Color(hex: 0x2F63EC).opacity(0.35), radius: 8, y: 3)
-        Text("Blueprint")
+        Text("Architecture Dissector")
           .font(.system(size: 18, weight: .semibold))
       }
       (Text("See how your apps\nare built, ") + Text("and how\nthey change.").foregroundStyle(Theme.brand))
         .font(.system(size: 36, weight: .bold))
         .lineSpacing(1)
         .fixedSize(horizontal: false, vertical: true)
-      Text("Your coding agents map each app's architecture. Blueprint draws it, tells you when the code moves on, and shows what changed between versions.")
+      Text("Your coding agents map each app's architecture. Architecture Dissector draws it, tells you when the code moves on, and shows what changed between versions.")
         .font(.system(size: 14))
         .foregroundStyle(.secondary)
         .lineSpacing(3)
@@ -145,7 +145,7 @@ struct DropZone: View {
       VStack(alignment: .leading, spacing: 4) {
         Text(targeted ? "Drop to track it" : "Drop an app folder here")
           .font(.system(size: 15, weight: .semibold))
-        Text(targeted ? "Blueprint starts watching it right away." : "Or click to choose one. Drop several to track them all.")
+        Text(targeted ? "Architecture Dissector starts watching it right away." : "Or click to choose one. Drop several to track them all.")
           .font(.system(size: 12))
           .foregroundStyle(.secondary)
       }
@@ -288,7 +288,7 @@ struct CopyButtonStyle: ViewModifier {
   }
 }
 
-/// The steps that connect projects to Blueprint through their agents: the command and the skill agents use,
+/// The steps that connect projects to Architecture Dissector through their agents: the command and the skill agents use,
 /// tracking an app, the prompt that maps it, and the snippet that keeps it current. `track` is how step 3
 /// tracks a folder where the guide is shown.
 struct SetupGuide<Track: View>: View {
@@ -299,7 +299,7 @@ struct SetupGuide<Track: View>: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
-      SetupStep(number: 1, title: "Install the blueprint command", detail: "Agents save each map with it. Blueprint links it into /usr/local/bin.", done: commandInstalled) {
+      SetupStep(number: 1, title: "Install the blueprint command", detail: "Agents save each map with it. Architecture Dissector links it into /usr/local/bin.", done: commandInstalled) {
         install(done: commandInstalled, title: "Install") {
           CommandLineTool.install()
           commandInstalled = CommandLineTool.isInstalled
@@ -307,7 +307,7 @@ struct SetupGuide<Track: View>: View {
       } content: {
         EmptyView()
       }
-      SetupStep(number: 2, title: "Install the agent skill", detail: "It teaches Claude Code, Cursor and Codex when and how to use Blueprint, in every project.", done: skill == .installed) {
+      SetupStep(number: 2, title: "Install the agent skill", detail: "It teaches Claude Code, Cursor and Codex when and how to use Architecture Dissector, in every project.", done: skill == .installed) {
         install(done: skill == .installed, title: skill == .outdated ? "Update" : "Install") {
           problem = AgentSkill.install()
           skill = AgentSkill.state
@@ -320,7 +320,7 @@ struct SetupGuide<Track: View>: View {
             .fixedSize(horizontal: false, vertical: true)
         }
       }
-      SetupStep(number: 3, title: "Track an app", detail: "Blueprint watches its folder for changes, and never writes to it.") {
+      SetupStep(number: 3, title: "Track an app", detail: "Architecture Dissector watches its folder for changes, and never writes to it.") {
         EmptyView()
       } content: {
         track
@@ -402,7 +402,7 @@ struct SetupSheet: View {
       VStack(alignment: .leading, spacing: 6) {
         Text("Connect your projects")
           .font(.title2.weight(.bold))
-        Text("Coding agents map each app with the blueprint command, and Blueprint draws what they save. Do the first two steps once, then the rest for every app.")
+        Text("Coding agents map each app with the blueprint command, and Architecture Dissector draws what they save. Do the first two steps once, then the rest for every app.")
           .foregroundStyle(.secondary)
           .fixedSize(horizontal: false, vertical: true)
       }
@@ -436,7 +436,7 @@ struct SkillStatus: View {
       if state == .installed {
         Image(systemName: "checkmark.circle.fill")
           .foregroundStyle(Theme.added)
-        Text("The agent skill is installed, so agents know about Blueprint.")
+        Text("The agent skill is installed, so agents know about Architecture Dissector.")
           .foregroundStyle(.secondary)
       } else {
         Image(systemName: "exclamationmark.circle.fill")
@@ -482,7 +482,7 @@ struct CLIStatus: View {
 
 // MARK: - The live demo
 
-/// A small made-up app that loops through the three things Blueprint does.
+/// A small made-up app that loops through the three things Architecture Dissector does.
 struct WelcomeDemo: View {
   @State private var step = 0
   private static let duration: Double = 4.5

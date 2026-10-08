@@ -385,7 +385,7 @@ final class AppStore {
   func pastVersionsPrompt(for app: TrackedApp, versions: [String]) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
     let one = versions.count == 1
-    return "The Blueprint \(one ? "version" : "versions") \(versions.formatted(.list(type: .and))) of the app in \(path) \(one ? "has" : "have") no \(timelinePart). Fill \(one ? "it" : "them") in from the code of each version in the git history, as `blueprint guide` explains in \"Fill in older versions\"."
+    return "The Architecture Dissector \(one ? "version" : "versions") \(versions.formatted(.list(type: .and))) of the app in \(path) \(one ? "has" : "have") no \(timelinePart). Fill \(one ? "it" : "them") in from the code of each version in the git history, as `blueprint guide` explains in \"Fill in older versions\"."
   }
 
   /// Moves off a version, and drops a comparison with one, that has nothing to show on this tab and level.
@@ -455,7 +455,7 @@ final class AppStore {
 
   func flowsPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Map every workflow of the app in \(path) as Blueprint flows: what people using it do, what its owner does, what agents do, and what the app does on its own, each with its actor and area. Run `blueprint guide` to see how."
+    return "Map every workflow of the app in \(path) as Architecture Dissector flows: what people using it do, what its owner does, what agents do, and what the app does on its own, each with its actor and area. Run `blueprint guide` to see how."
   }
 
   // MARK: Data
@@ -491,12 +491,12 @@ final class AppStore {
 
   func explainersPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Add explainers to the Blueprint architecture of the app in \(path): short videos about how parts of it work, scene by scene. Run `blueprint guide` to see how."
+    return "Add explainers to the Architecture Dissector architecture of the app in \(path): short videos about how parts of it work, scene by scene. Run `blueprint guide` to see how."
   }
 
   func dataPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Add the data to the Blueprint architecture of the app in \(path): every table, collection, file or setting it stores, with its fields and what they point to. Run `blueprint guide` to see how."
+    return "Add the data to the Architecture Dissector architecture of the app in \(path): every table, collection, file or setting it stores, with its fields and what they point to. Run `blueprint guide` to see how."
   }
 
   // MARK: Walkthrough
@@ -579,7 +579,7 @@ final class AppStore {
     panel.canChooseFiles = false
     panel.allowsMultipleSelection = true
     panel.prompt = "Track"
-    panel.message = "Choose the folders of the apps you want Blueprint to track."
+    panel.message = "Choose the folders of the apps you want Architecture Dissector to track."
     if panel.runModal() == .OK { add(panel.urls) }
   }
 
@@ -619,36 +619,36 @@ final class AppStore {
   }
 
   /// What to ask an agent working in a project to map it, for any project.
-  static let mapPrompt = "Add this app to Blueprint and map it, including its past releases. Run `blueprint guide` and follow it."
+  static let mapPrompt = "Add this app to Architecture Dissector and map it, including its past releases. Run `blueprint guide` and follow it."
 
   /// A section for a project's AGENTS.md or CLAUDE.md, so every agent working in it keeps the map current.
   static let agentsSnippet = """
-    ## Blueprint
+    ## Architecture Dissector
 
-    This app is mapped in Blueprint. Before changing it, read the map with `blueprint show --json`, or `blueprint show --data --json` for what it stores. After changing its structure, workflows or stored data, run `blueprint status`, update the map as `blueprint guide` explains, and save it with `blueprint set`.
+    This app is mapped in Architecture Dissector. Before changing it, read the map with `blueprint show --json`, or `blueprint show --data --json` for what it stores. After changing its structure, workflows or stored data, run `blueprint status`, update the map as `blueprint guide` explains, and save it with `blueprint set`.
     """
 
   func prompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
     guard data[app.id]?.current != nil else {
-      return "Map the architecture of the app in \(path) for Blueprint. Run `blueprint guide` and follow it."
+      return "Map the architecture of the app in \(path) for Architecture Dissector. Run `blueprint guide` and follow it."
     }
-    return "The Blueprint architecture of the app in \(path) is out of date. Run `blueprint status` in that folder to see what changed, then update it following `blueprint guide`."
+    return "The Architecture Dissector architecture of the app in \(path) is out of date. Run `blueprint status` in that folder to see what changed, then update it following `blueprint guide`."
   }
 
   func walkthroughPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Add a walkthrough to the Blueprint architecture of the app in \(path), and give every component a clear role and details. Run `blueprint guide` to see how."
+    return "Add a walkthrough to the Architecture Dissector architecture of the app in \(path), and give every component a clear role and details. Run `blueprint guide` to see how."
   }
 
   func overviewPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Add an overview to the Blueprint architecture of the app in \(path): 3 to 6 blocks that explain it in plain words, each standing for some of its components. Run `blueprint guide` to see how."
+    return "Add an overview to the Architecture Dissector architecture of the app in \(path): 3 to 6 blocks that explain it in plain words, each standing for some of its components. Run `blueprint guide` to see how."
   }
 
   func notesPrompt(for app: TrackedApp) -> String {
     let path = (app.path as NSString).abbreviatingWithTildeInPath
-    return "Add a note to every connection in the Blueprint architecture of the app in \(path): what travels over it, how and when. Run `blueprint guide` to see how."
+    return "Add a note to every connection in the Architecture Dissector architecture of the app in \(path): what travels over it, how and when. Run `blueprint guide` to see how."
   }
 
   func copyPrompt(for app: TrackedApp) {

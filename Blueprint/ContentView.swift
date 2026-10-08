@@ -31,7 +31,7 @@ struct ContentView: View {
     .overlay {
       if store.isDropTargeted, store.selectedApp != nil { DropOverlay() }
     }
-    .alert("Blueprint", isPresented: Binding(get: { store.alert != nil }, set: { if !$0 { store.alert = nil } })) {
+    .alert("Architecture Dissector", isPresented: Binding(get: { store.alert != nil }, set: { if !$0 { store.alert = nil } })) {
       Button("OK") { store.alert = nil }
     } message: {
       Text(store.alert ?? "")
@@ -45,7 +45,7 @@ struct ContentView: View {
   }
 }
 
-/// Whether a dropped item is a folder. Files are skipped, since Blueprint tracks app folders.
+/// Whether a dropped item is a folder. Files are skipped, since Architecture Dissector tracks app folders.
 func isFolder(_ url: URL) -> Bool {
   var isDirectory: ObjCBool = false
   return FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) && isDirectory.boolValue
@@ -205,7 +205,7 @@ struct SaveVersionSheet: View {
     VStack(alignment: .leading, spacing: 14) {
       Text("Save Current as Version")
         .font(.headline)
-      Text("Blueprint keeps a copy of the current architecture under this name, so you can compare it with later versions.")
+      Text("Architecture Dissector keeps a copy of the current architecture under this name, so you can compare it with later versions.")
         .font(.callout)
         .foregroundStyle(.secondary)
         .fixedSize(horizontal: false, vertical: true)

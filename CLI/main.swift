@@ -83,7 +83,7 @@ enum Command: String, CaseIterable {
   var summary: String {
     switch self {
     case .capabilities: "What blueprint can do, and what changed in each version"
-    case .list: "The apps Blueprint tracks, and whether their architecture is up to date"
+    case .list: "The apps Architecture Dissector tracks, and whether their architecture is up to date"
     case .add: "Track an app folder"
     case .show: "Print an app's architecture"
     case .set: "Save an app's architecture from JSON"
@@ -91,7 +91,7 @@ enum Command: String, CaseIterable {
     case .snapshot: "Save the current architecture as a version, like 1.2.0"
     case .versions: "An app's saved versions"
     case .diff: "What changed in the architecture between two versions"
-    case .open: "Show an app in the Blueprint app"
+    case .open: "Show an app in the Architecture Dissector app"
     case .remove: "Stop tracking an app"
     case .guide: "How to map an app's architecture, for agents"
     }
@@ -104,7 +104,7 @@ enum Command: String, CaseIterable {
     case .list:
       "Lists the tracked apps, with how many components and entities their architecture has, how many versions you saved, whether code changed since the last save, and what's still missing: the architecture itself, the walkthrough, the overview, the notes on connections (when most have none), the flows (none, too few, or some without an actor or area), the explainers, or the data of an app that stores something. With --missing it lists only the apps missing that part, so an agent can add it to each one."
     case .add:
-      "Starts tracking a folder, the current one if you don't pass one. Blueprint keeps its data in its own folder and never writes to the app's folder. Then map the architecture: run blueprint guide to see how."
+      "Starts tracking a folder, the current one if you don't pass one. Architecture Dissector keeps its data in its own folder and never writes to the app's folder. Then map the architecture: run blueprint guide to see how."
     case .show:
       "Prints the current architecture of an app, or a saved version. With --json it prints the same JSON blueprint set takes, so you can edit it and save it back. With --data it prints only what the app stores: the components that hold data, and every entity with its fields."
     case .set:
@@ -118,7 +118,7 @@ enum Command: String, CaseIterable {
     case .diff:
       "Lists the components, connections and entities that were added, removed or changed between two versions. --from defaults to the newest version, and --to to the current architecture."
     case .open:
-      "Opens the Blueprint app on this app. With --version it shows that version, and with --compare it highlights what changed since that version."
+      "Opens the Architecture Dissector app on this app. With --version it shows that version, and with --compare it highlights what changed since that version."
     case .remove:
       "Stops tracking an app, and moves its architecture and versions to the Trash. The app's own folder stays as it is."
     case .guide:
@@ -175,7 +175,7 @@ enum Command: String, CaseIterable {
 func printHelp(_ command: Command?) {
   let bold = Terminal.bold
   guard let command else {
-    print(Terminal.wrap("Blueprint draws the architecture of your apps and shows how it changes between versions. Agents map an app with this command, and the Blueprint app draws it."))
+    print(Terminal.wrap("Architecture Dissector draws the architecture of your apps and shows how it changes between versions. Agents map an app with this command, and the Architecture Dissector app draws it."))
     print()
     print("\(bold("Usage:")) blueprint [command] [options]")
     print()

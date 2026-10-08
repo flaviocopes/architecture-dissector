@@ -5,11 +5,11 @@ struct BlueprintApp: App {
   @State private var store = AppStore()
 
   init() {
-    AppUpdater.shared.start(repository: "flaviocopes/blueprint")
+    AppUpdater.shared.start(repository: "flaviocopes/architecture-dissector")
   }
 
   var body: some Scene {
-    Window("Blueprint", id: "main") {
+    Window("Architecture Dissector", id: "main") {
       ContentView()
         .environment(store)
         .task { store.start() }

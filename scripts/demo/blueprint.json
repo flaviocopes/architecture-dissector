@@ -1,5 +1,5 @@
 {
-  "name": "Blueprint",
+  "name": "Architecture Dissector",
   "summary": "A SwiftUI Mac app that draws the architecture of your apps and shows how it changes between versions, plus the blueprint command agents use to map them.",
   "walkthrough": [
     {
@@ -62,7 +62,7 @@
     },
     {
       "id": "the-app",
-      "name": "The Blueprint app",
+      "name": "The Architecture Dissector app",
       "summary": "Draws each app as a diagram you can explore, and shows what changed",
       "kind": "client",
       "nodes": [
@@ -85,7 +85,7 @@
     },
     {
       "id": "memory",
-      "name": "Blueprint's memory",
+      "name": "Architecture Dissector's memory",
       "summary": "Keeps every map and version on your Mac, and spots changes in your code",
       "kind": "storage",
       "nodes": [
@@ -98,7 +98,7 @@
     {
       "id": "your-apps",
       "name": "Your app folders",
-      "summary": "The code Blueprint reads, and never changes",
+      "summary": "The code Architecture Dissector reads, and never changes",
       "nodes": [
         "repos"
       ]
@@ -199,7 +199,7 @@
       "name": "FileWatcher",
       "kind": "service",
       "group": "mac-app",
-      "summary": "Watches Blueprint's data and every tracked folder",
+      "summary": "Watches Architecture Dissector's data and every tracked folder",
       "tech": [
         "FSEvents"
       ],
@@ -265,7 +265,7 @@
     },
     {
       "id": "data",
-      "name": "Blueprint data",
+      "name": "Architecture Dissector data",
       "kind": "storage",
       "group": "disk",
       "summary": "Tracked apps, current architectures, manifests and versions in Application Support",
@@ -435,7 +435,7 @@
           "id": "check",
           "title": "Is the JSON valid?",
           "kind": "decision",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "validation"
           ],
@@ -469,7 +469,7 @@
           "id": "save",
           "title": "The architecture is saved",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "library",
             "data"
@@ -480,7 +480,7 @@
           "id": "draw",
           "title": "The diagram appears",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "app-store",
             "canvas",
@@ -512,9 +512,9 @@
         },
         {
           "id": "notice",
-          "title": "Blueprint notices",
+          "title": "Architecture Dissector notices",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "watcher",
             "status"
@@ -525,7 +525,7 @@
           "id": "flag",
           "title": "Touched components get a badge",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "canvas"
           ]
@@ -588,7 +588,7 @@
           "id": "diff",
           "title": "The changes light up",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "diff",
             "canvas"
@@ -615,7 +615,7 @@
           "id": "watch",
           "title": "A file in an app folder changes",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "watcher"
           ]
@@ -625,7 +625,7 @@
           "title": "Status hashes the files",
           "text": "Only files git doesn't ignore, read-only.",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "status",
             "repos"
@@ -635,7 +635,7 @@
           "id": "changed",
           "title": "Different from the manifest?",
           "kind": "decision",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "status"
           ],
@@ -654,7 +654,7 @@
           "id": "flag",
           "title": "Touched components get a badge",
           "kind": "done",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "canvas"
           ]
@@ -663,7 +663,7 @@
           "id": "quiet",
           "title": "It stays up to date",
           "kind": "done",
-          "lane": "Blueprint"
+          "lane": "Architecture Dissector"
         }
       ]
     },
@@ -687,7 +687,7 @@
           "id": "check",
           "title": "The checks run",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "validation"
           ]
@@ -696,7 +696,7 @@
           "id": "save",
           "title": "Saved with a manifest",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "library",
             "data"
@@ -706,7 +706,7 @@
           "id": "done",
           "title": "The app redraws it",
           "kind": "done",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "canvas"
           ]
@@ -743,7 +743,7 @@
           "id": "save",
           "title": "Save it as a past version",
           "kind": "system",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "cli",
             "library"
@@ -753,7 +753,7 @@
           "id": "done",
           "title": "The timeline shows it",
           "kind": "done",
-          "lane": "Blueprint",
+          "lane": "Architecture Dissector",
           "nodes": [
             "views"
           ]
@@ -1099,7 +1099,7 @@
       "scenes": [
         {
           "title": "Agents do the mapping",
-          "text": "Blueprint never reads your code to draw it. Your coding agent does, with the blueprint command.",
+          "text": "Architecture Dissector never reads your code to draw it. Your coding agent does, with the blueprint command.",
           "nodes": [
             "you",
             "agent",

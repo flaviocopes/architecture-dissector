@@ -16,7 +16,7 @@ struct Architecture: Codable, Equatable, Sendable {
   var flows: [Flow] = []
   /// What the app stores: tables, collections, files and settings, field by field.
   var entities: [Entity] = []
-  /// Short videos about parts of the app. Agents say what each scene shows, and Blueprint plays them in one style.
+  /// Short videos about parts of the app. Agents say what each scene shows, and Architecture Dissector plays them in one style.
   var explainers: [Explainer] = []
 
   struct Explainer: Codable, Equatable, Sendable, Identifiable {
@@ -420,7 +420,7 @@ struct Snapshot: Codable, Equatable, Sendable {
   var architecture: Architecture
 }
 
-/// A folder Blueprint tracks.
+/// A folder Architecture Dissector tracks.
 struct TrackedApp: Codable, Identifiable, Hashable, Sendable {
   var id: String
   var name: String

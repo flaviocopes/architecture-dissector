@@ -103,7 +103,7 @@ enum DiagramTheme: String, CaseIterable, Sendable {
 
   var label: String {
     switch self {
-    case .blueprint: "Blueprint"
+    case .blueprint: "Architecture Dissector"
     case .terminal: "Terminal"
     case .minimal: "Minimal"
     case .ascii: "ASCII"
@@ -120,7 +120,7 @@ extension EnvironmentValues {
   @Entry var diagramTheme: DiagramTheme = .blueprint
 }
 
-/// The colors, lines and type of a theme other than Blueprint, which keeps its own richer look.
+/// The colors, lines and type of a theme other than Architecture Dissector, which keeps its own richer look.
 struct DiagramStyle {
   let theme: DiagramTheme
   let scheme: ColorScheme

@@ -1,6 +1,6 @@
 #!/bin/sh
-# Builds a universal (Apple silicon and Intel) Blueprint.app, with the blueprint command inside, and
-# writes dist/Blueprint-<version>.zip. Signs it with Flavio Copes's Developer ID and notarizes it when that
+# Builds a universal (Apple silicon and Intel) Architecture Dissector.app, with the blueprint command inside, and
+# writes dist/Architecture-Dissector-<version>.zip. Signs it with Flavio Copes's Developer ID and notarizes it when that
 # certificate is in the keychain, and keeps Xcode's ad-hoc signature everywhere else (CI, forks).
 # The name and version come from project.yml.
 # Usage: scripts/build-release.sh
@@ -8,17 +8,18 @@ set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 cd "$ROOT"
-NAME=$(sed -n 's/^name: *//p' project.yml)
+NAME="Architecture Dissector"
+TARGET="Blueprint"
 VERSION=$(sed -n 's/^ *MARKETING_VERSION: "\(.*\)"$/\1/p' project.yml)
 BUILD="$ROOT/build/release"
 APP="$BUILD/Release/$NAME.app"
-ZIP="$ROOT/dist/$NAME-$VERSION.zip"
+ZIP="$ROOT/dist/Architecture-Dissector-$VERSION.zip"
 CHECK=$(mktemp -d)
 trap 'rm -rf "$CHECK"' EXIT
 
 rm -rf "$BUILD" "$ZIP"
 mkdir -p dist
-xcodebuild -project "$NAME.xcodeproj" -target "$NAME" -configuration Release \
+xcodebuild -project "$TARGET.xcodeproj" -target "$TARGET" -configuration Release \
   ARCHS="arm64 x86_64" ONLY_ACTIVE_ARCH=NO SYMROOT="$BUILD" -quiet build
 
 lipo "$APP/Contents/MacOS/$NAME" -verify_arch arm64 x86_64

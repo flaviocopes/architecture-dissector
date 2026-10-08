@@ -460,7 +460,7 @@ struct ExplainersEmpty: View {
           .foregroundStyle(Theme.brand)
         Text("No explainers yet")
           .font(.title2.weight(.bold))
-        Text("Explainers are short videos about how parts of \(store.name(of: app)) work. An agent writes what each scene shows and says, and Blueprint plays it on the real diagrams, in the same style for every app.")
+        Text("Explainers are short videos about how parts of \(store.name(of: app)) work. An agent writes what each scene shows and says, and Architecture Dissector plays it on the real diagrams, in the same style for every app.")
           .font(.system(size: 13.5))
           .foregroundStyle(.secondary)
           .multilineTextAlignment(.center)

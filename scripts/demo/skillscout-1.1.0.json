@@ -1,5 +1,5 @@
 {
-  "name": "Skillscout",
+  "name": "Skill Cabinet",
   "summary": "A SwiftUI Mac app and a skillscout command that list the skills of 8 coding agents, count how often chats use them, and ask AI for new skill ideas.",
   "overview": [
     {
@@ -414,7 +414,7 @@
       "id": "saved-state",
       "name": "state.json",
       "store": "state",
-      "summary": "Everything Skillscout remembers between launches, except the chats",
+      "summary": "Everything Skill Cabinet remembers between launches, except the chats",
       "details": [
         "Saved a moment after each change, in one write",
         "Optional fields keep older files loading"
@@ -606,7 +606,7 @@
       "summary": "One skill: a folder with a SKILL.md that tells an agent when and how to use it",
       "details": [
         "Read by Cursor, Claude Code, Codex and 5 more agents",
-        "Skillscout changes it only through the Installer",
+        "Skill Cabinet changes it only through the Installer",
         "Copies in several agents' folders group by name"
       ],
       "paths": [

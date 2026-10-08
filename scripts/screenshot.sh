@@ -9,7 +9,7 @@ set -eu
 ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
 OUT=${1:-"$ROOT/docs"}
 EXTRA=${2:+$(cd "$(dirname "$2")" && pwd)/$(basename "$2")}
-APP="$ROOT/build/screenshot/Blueprint Screenshot.app"
+APP="$ROOT/build/screenshot/Architecture Dissector Screenshot.app"
 
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$OUT"
@@ -27,7 +27,7 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   <key>CFBundleIdentifier</key>
   <string>com.flaviocopes.blueprint.screenshot</string>
   <key>CFBundleName</key>
-  <string>Blueprint</string>
+  <string>Architecture Dissector</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>NSHighResolutionCapable</key>
@@ -39,5 +39,5 @@ PLIST
 codesign --force --sign - "$APP"
 open -n "$APP" --args "$OUT" "$ROOT/build/demo-home" "$ROOT/scripts/demo" ${EXTRA:+"$EXTRA"} -AppleLocale en_US -AppleLanguages '(en)'
 sleep 1
-while pgrep -f "Blueprint Screenshot.app/Contents/MacOS" >/dev/null; do sleep 1; done
+while pgrep -f "Architecture Dissector Screenshot.app/Contents/MacOS" >/dev/null; do sleep 1; done
 ls -la "$OUT"/screenshot*.png

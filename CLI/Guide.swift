@@ -7,10 +7,10 @@ enum Guide {
     let stepKinds = StepKind.allCases.map { "  \(Terminal.pad($0.rawValue, 10)) \($0.help)" }.joined(separator: "\n")
     let actors = FlowActor.allCases.map { "  \(Terminal.pad($0.rawValue, 10)) \($0.help)" }.joined(separator: "\n")
     return """
-    # Mapping an app for Blueprint
+    # Mapping an app for Architecture Dissector
 
-    Blueprint draws an app's architecture as a diagram and shows how it changed between versions. \
-    You write the architecture as JSON and save it with the blueprint command. The Blueprint app redraws it right away.
+    Architecture Dissector draws an app's architecture as a diagram and shows how it changed between versions. \
+    You write the architecture as JSON and save it with the blueprint command. The Architecture Dissector app redraws it right away.
 
     ## Map an app for the first time
 
@@ -23,8 +23,8 @@ enum Guide {
     ## Update it after you change the app
 
     1. Run `blueprint status`. It lists the files that changed since the last save, by component, and the changed files no component covers.
-    2. Run `blueprint show --json > /tmp/<app>.json` and edit the file. Keep the id of every component and entity that still exists, even when you rename it, and the name of every field, because Blueprint compares versions by them. Update the walkthrough, overview, summaries, details, connection notes, flows, entities and explainers too when what they describe changed. Put new components in the overview block they belong to.
-    3. Run `blueprint set --file /tmp/<app>.json`. Save it even when the architecture didn't change, so Blueprint knows it's current.
+    2. Run `blueprint show --json > /tmp/<app>.json` and edit the file. Keep the id of every component and entity that still exists, even when you rename it, and the name of every field, because Architecture Dissector compares versions by them. Update the walkthrough, overview, summaries, details, connection notes, flows, entities and explainers too when what they describe changed. Put new components in the overview block they belong to.
+    3. Run `blueprint set --file /tmp/<app>.json`. Save it even when the architecture didn't change, so Architecture Dissector knows it's current.
 
     ## Save a version when the app ships
 
@@ -41,7 +41,7 @@ enum Guide {
 
     ## Fill in older versions
 
-    Versions saved before an app's flows, data, explainers or overview were mapped don't have them, so the Blueprint app leaves those versions out of the timeline on that tab. To add what an older version misses:
+    Versions saved before an app's flows, data, explainers or overview were mapped don't have them, so the Architecture Dissector app leaves those versions out of the timeline on that tab. To add what an older version misses:
 
     1. Run `blueprint versions --json` to see the commit of each version, and extract that commit without touching the repo: `mkdir -p /tmp/<app>-1.0.0 && git archive <commit> | tar -x -C /tmp/<app>-1.0.0`. Use the version's tag, like v1.0.0, when it has no commit.
     2. Run `blueprint show --version 1.0.0 --json > /tmp/<app>-1.0.0.json`, and add what's missing from the code you extracted, as this guide describes. Reuse the ids of the current architecture for the flows, entities and blocks that already existed then, and leave the rest of the version as it is.
@@ -49,7 +49,7 @@ enum Guide {
 
     ## Fill in what's missing
 
-    `blueprint list` shows what each app still misses: its architecture, its walkthrough, its overview, notes on its connections (when most have none), its flows (none, too few, or some without an actor or area), its explainers, or the data of an app that stores something. When asked to fill in Blueprint, work through them app by app:
+    `blueprint list` shows what each app still misses: its architecture, its walkthrough, its overview, notes on its connections (when most have none), its flows (none, too few, or some without an actor or area), its explainers, or the data of an app that stores something. When asked to fill in Architecture Dissector, work through them app by app:
 
     1. Run `blueprint list --missing data --json`, or --missing architecture, walkthrough, overview, notes, flows or explainers. Each app comes with its id, and its folder in path.
     2. For each app, read the code in its folder, run `blueprint show <id> --json > /tmp/<id>.json`, add what's missing as this guide describes, and save it with `blueprint set <id> --file /tmp/<id>.json`. An app with no architecture yet gets mapped from scratch.
@@ -64,7 +64,7 @@ enum Guide {
     - A connection points from the part that starts the interaction to the other one: the caller to the callee, the writer to the database, the user to the app.
     - Labels are 2 to 4 words, starting with a verb: "loads skills", "sends receipts", "stores sessions".
     - tech lists the frameworks, libraries and services it uses, like ["SwiftUI", "FSEvents"].
-    - paths lists the files and folders that implement the component, relative to the app folder. Blueprint uses them to show which components changed since the last save, so fill them in for every component that lives in the code.
+    - paths lists the files and folders that implement the component, relative to the app folder. Architecture Dissector uses them to show which components changed since the last save, so fill them in for every component that lives in the code.
     - Ids are lowercase with dashes, like app-store, and never change once saved.
     - No secrets, keys or personal data.
 
@@ -73,17 +73,17 @@ enum Guide {
     People read the architecture in the app to understand how it works, so the words matter as much as the boxes. Keep every text short and plain, and write about this app, not about the technology in general.
 
     - The app's summary says what the app is and who it's for, in one or two sentences.
-    - walkthrough has 3 to 6 steps that walk a newcomer through how the app works, in the order things happen: what starts it, where data goes, what runs in the background. Each step has a title of 2 to 5 words, a text of one or two short sentences, and the ids of the components it involves, so Blueprint can highlight them.
+    - walkthrough has 3 to 6 steps that walk a newcomer through how the app works, in the order things happen: what starts it, where data goes, what runs in the background. Each step has a title of 2 to 5 words, a text of one or two short sentences, and the ids of the components it involves, so Architecture Dissector can highlight them.
     - A component's summary is its role in this app, in one sentence: what it does here and why the app needs it. "Keeps every day in one SQLite file, and is the only part that writes to it", not "A storage service".
     - details has up to 4 short points, under 15 words each, that make the role precise: what it owns, how it does its job, what depends on it, what to watch out for.
 
     ## Three levels: overview, in depth, technical
 
-    Blueprint draws the architecture at three levels, and opens on the overview. In Depth is the components and connections. \
+    Architecture Dissector draws the architecture at three levels, and opens on the overview. In Depth is the components and connections. \
     The other two need a part of their own.
 
     The overview explains the app to someone who has never seen it and doesn't code, as you'd explain it to a curious kid. \
-    overview has 3 to 6 blocks, and Blueprint draws an arrow between two blocks wherever their components connect:
+    overview has 3 to 6 blocks, and Architecture Dissector draws an arrow between two blocks wherever their components connect:
 
     - name says what the block is in plain words, from the reader's side: "You", "The app on your Mac", "The server that sends your emails", "Where your notes are saved".
     - summary says what it does for the reader in one short sentence, with no jargon and no names of technologies: "Keeps every note you write, even when you're offline".
@@ -107,7 +107,7 @@ enum Guide {
 
     Then, for each flow:
 
-    - actor says whose workflow it is: user, owner, agent or app (see below). Blueprint groups the flows by it.
+    - actor says whose workflow it is: user, owner, agent or app (see below). Architecture Dissector groups the flows by it.
     - area is the part of the app it belongs to, in 1 to 3 words: "Editor", "Sync", "Billing", "Releases". Reuse a handful of areas, usually 3 to 8, so flows of the same part sit together.
     - One flow per workflow, named the way its actor would say it: "Write today's note", "Restore a backup", "Let an agent add a todo", "Send the morning digest".
     - goal is the need behind it, in one sentence from the actor's side: "Jot down what you're working on before you forget".
@@ -121,7 +121,7 @@ enum Guide {
     ## Data: what the app stores
 
     entities lists what the app keeps: database tables, Convex or Firestore collections, JSON files, groups of settings, Keychain items. \
-    Blueprint draws them as a schema, field by field, and shows how the schema changed between versions.
+    Architecture Dissector draws them as a schema, field by field, and shows how the schema changed between versions.
 
     - One entity per kind of record. Leave out caches the app can rebuild, unless they help explain how it works.
     - store is the id of the component that holds it, usually a database or storage component.
@@ -130,12 +130,12 @@ enum Guide {
     - fields lists what each record holds, in the order the code defines it. name is the name in the code, type is the type as the code writes it (text, integer, timestamp, String?, [Note]). Set "key": true on the field that identifies a record, "ref" to the id of the entity a field points to (a foreign key, or a list or object of another entity it holds), and a note of a few words when the name doesn't say enough.
     - details has up to 4 short points: what writes it, when it's cleaned up, how it migrates, what to watch out for.
     - paths lists the files that define it: the migration, the schema, the model type.
-    - Entity ids never change once saved, and neither do field names unless the code renames the field. Blueprint compares entities by id and fields by name, so a migration shows up as fields added, removed or changed.
+    - Entity ids never change once saved, and neither do field names unless the code renames the field. Architecture Dissector compares entities by id and fields by name, so a migration shows up as fields added, removed or changed.
 
     ## Explainers: short videos about parts of the app
 
     explainers are short videos that explain one part of the app each. You write what every scene shows and says. \
-    Blueprint plays them in the same style for every app: it opens with the title, moves the camera to what each scene shows on the real diagrams, highlights it, captions it, times each scene to its text, and adds the sound effects.
+    Architecture Dissector plays them in the same style for every app: it opens with the title, moves the camera to what each scene shows on the real diagrams, highlights it, captions it, times each scene to its text, and adds the sound effects.
 
     - 2 to 6 explainers, each about something a newcomer would ask: "How a note gets saved", "What happens when you ship a release", "Where your settings live".
     - summary says what you learn from it, in one sentence.

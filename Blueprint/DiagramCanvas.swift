@@ -551,7 +551,7 @@ struct GroupBoxView: View {
   }
 }
 
-/// A group, lane or store in a theme other than Blueprint.
+/// A group, lane or store in a theme other than Architecture Dissector.
 struct ThemedBox: View {
   let name: String
   var count: Int?
@@ -925,7 +925,7 @@ struct EdgeView: View {
     }
   }
 
-  /// Blueprint and Terminal show data moving along a highlighted connection; the quieter themes don't.
+  /// Architecture Dissector and Terminal show data moving along a highlighted connection; the quieter themes don't.
   private var flows: Bool { theme == .blueprint || theme == .terminal }
   /// The pulses' length and spacing, in world points. They stay fixed as you zoom, so the looping phase never jumps.
   private static let pulse: CGFloat = 10
